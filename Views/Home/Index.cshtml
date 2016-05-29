@@ -1,0 +1,95 @@
+﻿@{
+    ViewBag.Title = "Tact School Game";
+}
+
+<div ng-app="tactSchoolGameApp" ng-controller="PlayerCtrl" ng-init="init()">
+    <div class="row col-xs-12 col-sm-12 col-md-12 col-lg-12">
+        <div class="col-xs-4 col-sm-4 col-md-4 col-lg-4">
+            <h2>Stock Trading</h2>
+            <table border="1" class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+                <tr>
+                    <th>Name</th>
+                    <th>Price</th>
+                    <th>Dividend</th>
+                </tr>
+                <tr ng-repeat="item in marketData" ng-click="selectedBuyStock($index)">
+                    <td>{{ item.Name }}</td>
+                    <td>{{ item.Price | currency:'฿' }}</td>
+                    <td>{{ item.Dividend | currency:'฿' }}</td>
+                </tr>
+            </table>
+        </div>
+        <div class="col-xs-8 col-sm-8 col-md-8 col-lg-8">
+            <h2>Portfolio</h2>
+            <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+                @*<p><span>Cash</span> : {{ item.Cash | currency:'฿' }} <span>Portfolio</span> : {{ item.Portfolio | currency:'฿' }}</p>*@
+                <table class="col-xs-12 col-sm-12 col-md-12 col-lg-12" ng-model="marketData">
+                    <thead>
+                        <tr>
+                            <th>Name</th>
+                            <th>Volume</th>
+                            <th>Avg Price</th>
+                            <th>Amount</th>
+                            <th>Market Price</th>
+                            <th>Market Value</th>
+                            <th>Profit/Loss</th>
+                            <th>Dividend</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr ng-repeat="stock in portfolio">
+                            <td>{{ stock.Name }}</td>
+                            <td>{{ stock.Vol }}</td>
+                            <td>{{ stock.Price | currency:'฿' }}</td>
+                            <td>{{ getMultiply(stock.Vol, stock.Price) | currency:'฿' }}</td>
+                            <td>{{ stock.MarketPrice | currency:'฿' }}</td>
+                            <td>{{ getMultiply(stock.Vol, stock.MarketPrice) | currency:'฿' }}</td>
+                            <td>{{ getDiff(getMultiply(stock.Vol, stock.MarketPrice), getMultiply(stock.Vol, stock.Price)) | currency:'฿'}}</td>
+                            <td>{{ getMultiply(stock.Vol, stock.Dividend) | currency:'฿' }}</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+    <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+        <div class="col-xs-4 col-sm-4 col-md-4 col-lg-4">
+            Cash : {{ player.Cash | currency:'฿' }}
+        </div>
+        <div class="col-xs-4 col-sm-4 col-md-4 col-lg-4">
+            Stock Value : {{ getPortFolioPL() | currency:'฿' }}
+        </div>
+        <div class="col-xs-4 col-sm-4 col-md-4 col-lg-4">
+            Portfolio : {{ player.Portfolio | currency:'฿' }}
+        </div>
+    </div>
+    <div class="row col-xs-12 col-sm-12 col-md-12 col-lg-12">
+        <div class="row col-xs-4 col-sm-4 col-md-4 col-lg-4">
+            <select ng-options="cmd.id as cmd.name for cmd in tradeCmds" ng-model="tradeCmdSelected" ng-change="changeTradeCmd()"></select>
+        </div>
+        <div class="row col-xs-4 col-sm-4 col-md-4 col-lg-4">
+            <select ng-options="stock.name as stock.name for stock in stocksTrade" ng-model="stockTradeSelected" ng-change="changeTradePrice()"></select>
+        </div>
+        <div class="row col-xs-4 col-sm-4 col-md-4 col-lg-4">
+            Price: {{ tradePrice | currency:'฿' }}
+        </div>
+    </div>
+    <div class="row col-xs-12 col-sm-12 col-md-12 col-lg-12">
+        <div class="row col-xs-6 col-sm-6 col-md-6 col-lg-6">
+            <label>Vol: </label>
+            <input type="number" ng-model="tradeVol" min="100" step="100"/>
+        </div>
+        <div class="row col-xs-6 col-sm-6 col-md-6 col-lg-6">
+            Total: {{ getMultiply(tradePrice, tradeVol) | currency:'฿' }}
+        </div>
+    </div>
+    <div class="row col-xs-12 col-sm-12 col-md-12 col-lg-12">
+        <button type="button" class="btn btn-primary" style="float:right;" ng-click="stockTrade()">CONFIRM</button>
+    </div>
+</div>
+
+<script src="~/Scripts/app.js"></script>
+<script src="~/Scripts/services/commonFilter.js"></script>
+<script src="~/Scripts/services/itemService.js"></script>
+<script src="~/Scripts/services/portfolioService.js"></script>
+<script src="~/Scripts/controllers/PlayerController.js"></script>

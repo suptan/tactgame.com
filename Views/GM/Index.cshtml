@@ -1,0 +1,87 @@
+﻿@{
+    ViewBag.Title = "Tact School Game";
+}
+
+<div ng-app="tactSchoolGameApp" ng-controller="GMCtrl" ng-init="init()">
+    <div class="row">
+        <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+            <p><span>Turn</span> : {{ currentTurn }} <span>Market Status</span> : {{ marketStatus }}</p>
+            <button type="button" class="btn btn-primary" ng-click="nextTurn()">Next Turn</button>
+            <button type="button" class="btn btn-success" ng-click="marketOpen()">Market Opend</button>
+            <button type="button" class="btn btn-warning" ng-click="marketClose()">Market Clsoed</button>
+            <button type="button" class="btn btn-danger" ng-click="resetTurn()">Reset Game</button>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-xs-4 col-sm-4 col-md-4 col-lg-4">
+            <h2>Stick List</h2>
+            <table border="1" class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+                <tr>
+                    <th>Name</th>
+                </tr>
+                <tr ng-repeat="item in stockList">
+                    <td ng-click="addToMarket(item)" ng-if="!stockListUsed[$index]">{{ item }}</td>
+                </tr>
+            </table>
+        </div>
+        <div class="col-xs-4 col-sm-4 col-md-4 col-lg-4">
+            <h2>Stock Trading</h2>
+            <table border="1" class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+                <tr>
+                    <th>Name</th>
+                    <th>Price</th>
+                    <th>Dividend</th>
+                    <th>Remove</th>
+                </tr>
+                <tr ng-repeat="item in marketData" ng-model="marketData">
+                    <td>{{ item.Name }}</td>
+                    <td>{{ item.Price | currency:'฿' }}</td>
+                    <td>{{ item.Dividend | currency:'฿' }}</td>
+                    <td><button type="button" class="btn btn-link" ng-click="removeFromMarket(item.Name)" ng-if="item.Name != 'INDEX'">X</button></td>
+                </tr>
+            </table>
+        </div>
+    </div>
+    <div class="row">
+        <h2>Score Board</h2>
+        <div ng-repeat="item in playerList">
+            <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+                <h4>{{ item.Name }}</h4>
+                <p><span>Cash</span> : {{ item.Cash | currency:'฿' }} <span>Portfolio</span> : {{ item.Portfolio | currency:'฿' }}</p>
+                <table class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+                    <thead>
+                        <tr>
+                            <th>Name</th>
+                            <th>Volume</th>
+                            <th>Avg Price</th>
+                            <th>Amount</th>
+                            <th>Market Price</th>
+                            <th>Market Value</th>
+                            <th>Profit/Loss</th>
+                            <th>Dividend</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr ng-repeat="stock in item.Stocks">
+                            <td>{{ stock.Name }}</td>
+                            <td>{{ stock.Vol }}</td>
+                            <td>{{ stock.Price | currency:'฿' }}</td>
+                            <td>{{ getMultiply(stock.Vol, stock.Price) | currency:'฿' }}</td>
+                            <td>{{ stock.MarketPrice | currency:'฿' }}</td>
+                            <td>{{ getMultiply(stock.Vol, stock.MarketPrice) | currency:'฿' }}</td>
+                            <td>{{ getDiff(getMultiply(stock.Vol, stock.MarketPrice), getMultiply(stock.Vol, stock.Price)) | currency:'฿'}}</td>
+                            <td>{{ getMultiply(stock.Vol, stock.Dividend) | currency:'฿' }}</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="~/Scripts/app.js"></script>
+<script src="~/Scripts/services/commonFilter.js"></script>
+<script src="~/Scripts/services/eventService.js"></script>
+<script src="~/Scripts/services/itemService.js"></script>
+<script src="~/Scripts/services/gmService.js"></script>
+<script src="~/Scripts/controllers/GMController.js"></script>

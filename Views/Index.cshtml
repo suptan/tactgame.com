@@ -1,0 +1,99 @@
+﻿
+@{
+    ViewBag.Title = "Index";
+}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <!-- Bootstrap -->
+    <link rel="stylesheet" type="text/css" href="~/Content/bootstrap.min.css">
+    <link rel="stylesheet" type="text/css" href="~/Content/bootstrap-theme.min.css">
+    <script src="~/Scripts/angular.min.js"></script>
+    <script src="~/Scripts/jquery-2.2.3.min.js"></script>
+    <script src="~/Scripts/bootstrap.min.js"></script>
+</head>
+<body ng-app="tactSchoolGameApp" ng-controller="loginCtrl">
+    <h1>Tact School Game</h1>
+    <h3>TURN: 1</h3>
+    <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+        <div class="col-xs-4 col-sm-4 col-md-4 col-lg-4">
+            <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">Stock Trading</div>
+            <!-- ng-repeat-->
+            <table border="1" class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+                <tr>
+                    <th>Name</th>
+                    <th>Price</th>
+                    <th>Dividend</th>
+                </tr>
+                <tr ng-repeat="item in marketData">
+                    <td>{{ item.Name }}</td>
+                    <td>{{ item.Price }}</td>
+                    <td>{{ item.Dividend }}</td>
+                </tr>
+                <!--tr>
+                    <td></td>
+                </tr>
+                <tr></tr-->
+            </table>
+
+        </div>
+        <div class="col-xs-8 col-sm-8 col-md-8 col-lg-8">
+            <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+                <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">Portfolio</div>
+                <!-- ng-repeat-->
+                <table class="col-xs-12 col-sm-12 col-md-12 col-lg-12" id="portfolio" border="1">
+                    <tr>
+                        <th>Name</th>
+                        <th>Volume</th>
+                        <th>Average Cost</th>
+                        <th>Market Price</th>
+                        <th>Profit/Loss</th>
+                        <th>Dividend</th>
+                    </tr>
+                    <tr ng-repeat="x in player.records">
+                        <td>{{ x.Name }}</td>
+                        <td>{{ x.Volume }}</td>
+                        <td>{{ x.Avg }}</td>
+                        <td>{{ x.Mkt }}</td>
+                        <td>{{ x.Gain }}</td>
+                        <td>{{ x.Div }}</td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+        <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+            <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">Buy - Sell</div>
+            <div class="col-xs-8 col-sm-8 col-md-8 col-lg-8">
+                <select>
+                    <option value="0">Buy</option>
+                    <option value="1">Sell</option>
+                </select>
+                <select ng-model="stockSelected" ng-options="item as item.Name for item in marketData"></select>
+                <label>Price: 10.00</label>
+                <label>Vol: </label>
+                <input type="text" ng-model="volumes">
+                <label>Total: 10.00</label>
+            </div>
+            <div class="col-xs-4 col-sm-4 col-md-4 col-lg-4">
+                <button ng-click="buyStock()">CONFIRM</button>
+            </div>
+        </div>
+
+        <div class="col-xs-6 col-sm-6 col-md-6 col-lg-6"></div>
+
+    </div>
+
+    <script>
+	var app = angular.module('tactSchoolGameApp', []);
+
+	app.controller('loginCtrl', function($scope, $http) {
+		// Get market data from json
+		$http.post("/GM/StockSearch", {}).success(function(data){console.log(data)});
+	});
+    </script>
+</body>
+</html>
+
