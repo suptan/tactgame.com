@@ -6,12 +6,10 @@ using System.Web.Mvc;
 
 namespace tactgame.com.Controllers
 {
-    public class HomeController : Controller
+    public class LoginController : Controller
     {
         public ActionResult Index()
         {
-            Session["USER_ID"] = 0;
-            Session["USER_NAME"] = "KhunTact";
             return View();
         }
 

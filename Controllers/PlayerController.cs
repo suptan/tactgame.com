@@ -33,8 +33,8 @@ namespace tactgame.com.Controllers
         public JsonResult PortfolioSearch()
         {
             // TEMP
-            Session["USER_ID"] = "1";
-            Session["USER_NAME"] = "playerA";
+            //Session["USER_ID"] = "1";
+            //Session["USER_NAME"] = "playerA";
             //playerPortfolioPath = string.Format("{0}\\{1}{2}", PLAYER_NAMES_PATH, Session["USER_NAME"], PORTFOLIO_FILE_FORMAT);
             //playerPath = string.Format("{0}\\{1}.csv", PLAYER_NAMES_PATH, Session["USER_NAME"]);
 

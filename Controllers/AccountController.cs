@@ -71,6 +71,7 @@ namespace tactgame.com.Controllers
         [AllowAnonymous]
         [ValidateAntiForgeryToken]
         public async Task<ActionResult> Login(LoginViewModel model, string returnUrl)
+        //public ActionResult Login(LoginViewModel model, string returnUrl)
         {
             if (!ModelState.IsValid)
             {
@@ -93,6 +94,8 @@ namespace tactgame.com.Controllers
                     ModelState.AddModelError("", "Invalid login attempt.");
                     return View(model);
             }
+
+            //return RedirectToAction("Index", "GM");
         }
 
         //

@@ -170,6 +170,7 @@
     <Compile Include="App_Start\Startup.Auth.cs" />
     <Compile Include="Controllers\AccountController.cs" />
     <Compile Include="Controllers\GMController.cs" />
+    <Compile Include="Controllers\LoginController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Controllers\PlayerController.cs" />
     <Compile Include="Controllers\TestController.cs" />
@@ -219,6 +220,7 @@
     <Content Include="App_Data\boards\marketStatus.csv" />
     <None Include="Scripts\jquery-1.10.2.intellisense.js" />
     <Content Include="Scripts\controllers\GMController.js" />
+    <Content Include="Scripts\controllers\AccountController.js" />
     <Content Include="Scripts\controllers\PlayerController.js" />
     <Content Include="Scripts\jquery-1.10.2.js" />
     <Content Include="Scripts\jquery-1.10.2.min.js" />
@@ -233,6 +235,7 @@
     <Content Include="Scripts\respond.min.js" />
     <Content Include="Scripts\services\commonFilter.js" />
     <Content Include="Scripts\services\eventService.js" />
+    <Content Include="Scripts\services\loginService.js" />
     <Content Include="Scripts\services\portfolioService.js" />
     <Content Include="Scripts\services\itemService.js" />
     <Content Include="Scripts\services\gmService.js" />

@@ -23,6 +23,8 @@ namespace tactgame.com.Controllers
         /// <returns></returns>
 		public ActionResult Index()
         {
+            var x = Session["USER_ID"];
+            var y = Session["USER_NAME"];
             return View();
         }
 
@@ -34,6 +36,8 @@ namespace tactgame.com.Controllers
         [HttpPost]
         public JsonResult StockListSearch()
         {
+            var x = Session["USER_ID"];
+            var y = Session["USER_NAME"];
             var csvData = new List<StockModel>();
             var stockNames = new List<string>();
             var csvFloder = stockNamesPath;
