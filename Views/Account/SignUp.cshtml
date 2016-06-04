@@ -1,0 +1,39 @@
+﻿@{
+    ViewBag.Title = "Tact School Game";
+}
+
+<div class="row col-xs-12 col-sm-12 col-md-12 col-lg-12" ng-app="tactSchoolGameApp" ng-controller="SignUpCtrl">
+    <h2>Sign Up</h2>
+    <hr />
+    <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+        <label>Username</label>
+        <input type="text" ng-model="username" ng-pattern="userRegex" required/>
+        <span class="alert alert-danger" ng-if="userErrorMsg">
+            <strong>{{ userErrorMsg }}</strong>
+        </span>
+    </div>
+    <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+        <label>Passwrod</label>
+        <input type="password" ng-model="password" ng-pattern="passRegex" placeholder="enter password" required/>
+        <span class="alert alert-danger" ng-if="passErrorMsg">
+            <strong>{{ passErrorMsg }}</strong>
+        </span>
+    </div>
+    <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+        <label>Re-Passwrod</label>
+        <input type="password" ng-model="rePassword" ng-pattern="passRegex" placeholder="enter password" required />
+        <span class="alert alert-danger" ng-if="retyPassErrorMsg">
+            <strong>{{ retyPassErrorMsg }}</strong>
+        </span>
+    </div>
+    <div class="alert alert-success" ng-if="createdMsg">
+        <strong>{{ createdMsg }}</strong>
+    </div>
+    <div class="col-xs-6 col-sm-6 col-md-6 col-lg-6">
+        <button type="button" class="btn btn-link" ng-click="signUp()">Create Account</button>
+    </div>
+</div>
+
+<script src="~/Scripts/app.js"></script>
+<script src="~/Scripts/services/signUpService.js"></script>
+<script src="~/Scripts/controllers/SignUpController.js"></script>

@@ -1,23 +1,27 @@
 ﻿@{
     ViewBag.Title = "Tact School Game";
 }
+<link rel="stylesheet" href="~/Content/login.css">
 
-<div class="row col-xs-12 col-sm-12 col-md-12 col-lg-12" ng-app="tactSchoolGameApp" ng-controller="AcctCtrl">
-    <h2>Loh in</h2>
-    <hr />
-    <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
-        <label>Username</label>
-        <input type="text" ng-model="username" ng-pattern="userRegex" required/>
-    </div>
-    <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
-        <label>Passwrod</label>
-        <input type="text" ng-model="password" ng-pattern="passRegex" required/>
-    </div>
-    <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
-        <button type="button" class="btn btn-primary" ng-click="login()">Log in</button>
-    </div>
-</div>
+<div class="container" ng-app="tactSchoolGameApp" ng-controller="AcctCtrl">
+    <section id="content">
+        <form>
+            <h1>Login</h1>
+            <div>
+                <input type="text" placeholder="Username" required="" id="username" ng-model="username" ng-pattern="userRegex"/>
+            </div>
+            <div>
+                <input type="password" placeholder="Password" required="" id="password" ng-model="password" ng-pattern="passRegex"/>
+            </div>
+            <div>
+                <input type="submit" ng-click="login($event)" value="Log in" />
+                <a href="#">Lost your password?</a>
+                @Html.ActionLink("Register", "SignUp", "Account")
+            </div>
+        </form><!-- form -->
+    </section><!-- content -->
+</div><!-- container -->
 
 <script src="~/Scripts/app.js"></script>
-<script src="~/Scripts/services/portfolioService.js"></script>
+<script src="~/Scripts/services/loginService.js"></script>
 <script src="~/Scripts/controllers/AccountController.js"></script>

@@ -23,26 +23,7 @@
         updateMarketData();
 
         // Set score board
-        gmService.searchPlayerList(function (response) {
-            $scope.playerList = response.ResponseMessage;
-            // Calculate summation of investment
-            angular.forEach($scope.playerList, function (value, key) {
-                angular.forEach(value.Stocks, function (value, key) {
-                    // Calculate total invest
-                    //value.Amount = value.Price * value.Vol;
-                    // Calculate stock market price
-                    for (var i = 0; i < $scope.marketData.length; i++) {
-                        if ($scope.marketData[i].Name === value.Name) {
-                            value.MarketPrice = $scope.marketData[i].Price;
-                            value.Dividend = $scope.marketData[i].Dividend;
-                            break;
-                        }
-                    }
-                });
-            });
-        }, function (response) {
-            console.log(response);
-        });
+        playerData();
     }
 
     // Change game turn
@@ -50,6 +31,7 @@
         gameCtrl.nextTurn(function (response) {
             $scope.currentTurn = response.ResponseMessage;
             updateMarketData();
+            playerData();
         }, function (response) {
             console.log(response);
         });
@@ -126,13 +108,6 @@
     function changeStock(stockName, isAdd) {
         gmService.changeStockInMarket(stockName, isAdd, function (response) {
             $scope.marketData = response.ResponseMessage;
-            // Remove stock in stock list that in market 
-            //angular.forEach($scope.marketData, function (value, key) {
-            //    var index = $scope.stockList.indexOf(value.Name);
-            //    if (index > -1) {
-            //        $scope.stockList.splice(index, 1);
-            //    }
-            //});
         }, function (response) {
             console.log(response);
         });
@@ -141,13 +116,29 @@
     function updateMarketData() {
         stockSearch.searchMarketList(function (response) {
             $scope.marketData = response.ResponseMessage;
-            // Remove stock in stock list that in market 
-            //angular.forEach($scope.marketData, function (value, key) {
-            //    var index = $scope.stockList.indexOf(value.Name);
-            //    if (index > -1) {
-            //        $scope.stockList.splice(index, 1);
-            //    }
-            //});
+        }, function (response) {
+            console.log(response);
+        });
+    }
+
+    function playerData() {
+        gmService.searchPlayerList(function (response) {
+            $scope.playerList = response.ResponseMessage;
+            // Calculate summation of investment
+            angular.forEach($scope.playerList, function (value, key) {
+                angular.forEach(value.Stocks, function (value, key) {
+                    // Calculate total invest
+                    //value.Amount = value.Price * value.Vol;
+                    // Calculate stock market price
+                    for (var i = 0; i < $scope.marketData.length; i++) {
+                        if ($scope.marketData[i].Name === value.Name) {
+                            value.MarketPrice = $scope.marketData[i].Price;
+                            value.Dividend = $scope.marketData[i].Dividend;
+                            break;
+                        }
+                    }
+                });
+            });
         }, function (response) {
             console.log(response);
         });

@@ -91,6 +91,8 @@ namespace tactgame.com.Controllers
             // Check if user already logged in
             //if (Session["username"] == null)
             //    return;
+            if (!IsMarketOpened())
+                return JSONHelper.CreateJSONResult(false, "Market is closed for trade.");
 
             // Check Buy/Sell volumns if less than 0 return error
             if (vol < 1)
@@ -164,6 +166,8 @@ namespace tactgame.com.Controllers
             // Check if user already logged in
             //if (Session["username"] == null)
             //    return;
+            if (!IsMarketOpened())
+                return JSONHelper.CreateJSONResult(false, "Market is closed for trade.");
 
             // Check Buy/Sell volumns if less than 0 return error
             if (vol < 1)
@@ -290,11 +294,11 @@ namespace tactgame.com.Controllers
                                 var newVol = 0;
                                 foreach (var stock in stocks)
                                 {
-                                    newPrice += stock.Price;
+                                    newPrice += stock.Price * (stock.Vol / 100);
                                     newVol += stock.Vol;
                                 }
                                 // Create new stock with avg cost
-                                var newStock = new StockModel(item.ID, item.Name, (newPrice / stocks.Count()), 0, newVol);
+                                var newStock = new StockModel(item.ID, item.Name, (newPrice / newVol), 0, newVol);
 
                                 // Remove all duplicate stocks
                                 csvData.RemoveAll(p => p.Name.ToUpper() == item.Name.ToUpper());
@@ -397,6 +401,31 @@ namespace tactgame.com.Controllers
                     player.Cash, 
                     player.Portfolio));
             }
+        }
+
+        /// <summary>
+        /// Check that market is open for trade
+        /// </summary>
+        /// <returns>The market status</returns>
+        private bool IsMarketOpened()
+        {
+            var path = string.Format("{0}\\{1}\\{2}", System.Web.HttpContext.Current.Server.MapPath("~/App_Data"), ConfigurationManager.AppSettings["boards"], ConfigurationManager.AppSettings["marketStatus"]);
+            var row = new List<string>();
+            var result = false;
+
+            using(var reader = new CSVHelper.CsvFileReader(path))
+            {
+                while (reader.ReadRow(row))
+                {
+                    if (!row.Contains("status") && row.First().Equals("1"))
+                    {
+                        result = true;
+                        break;
+                    }
+                }
+            }
+
+            return result;
         }
 
         #endregion

@@ -9,13 +9,13 @@ using tactgame.com.Models;
 
 namespace tactgame.com.Controllers
 {
-    [Authorize(Roles ="Administrators")]
     public class GMController : Controller
     {
         private List<string> searchAll = new List<string>();
         private string stockNamesPath = string.Format("{0}\\{1}", System.Web.HttpContext.Current.Server.MapPath("~/App_Data"), ConfigurationManager.AppSettings["companies"]);
         private string marketDataPath = string.Format("{0}\\{1}\\{2}", System.Web.HttpContext.Current.Server.MapPath("~/App_Data"), ConfigurationManager.AppSettings["boards"], ConfigurationManager.AppSettings["market"]);
         private string turnPath = string.Format("{0}\\{1}\\{2}", System.Web.HttpContext.Current.Server.MapPath("~/App_Data"), ConfigurationManager.AppSettings["boards"], ConfigurationManager.AppSettings["currentTurn"]);
+        private readonly string PLAYER_FLODER = string.Format(@"{0}\{1}", System.Web.HttpContext.Current.Server.MapPath("~/App_Data"), ConfigurationManager.AppSettings["players"]);
 
         /// <summary>
         /// 
@@ -23,9 +23,28 @@ namespace tactgame.com.Controllers
         /// <returns></returns>
 		public ActionResult Index()
         {
-            var x = Session["USER_ID"];
-            var y = Session["USER_NAME"];
-            return View();
+            var userid = Session["USER_ID"].ToString();
+            var username = Session["USER_NAME"].ToString();
+
+            if (!string.IsNullOrEmpty(userid) && !string.IsNullOrEmpty(username))
+            {
+                // Check role
+                using (var reader = new CSVHelper.CsvFileReader(string.Format(@"{0}\{1}\{2}", System.Web.HttpContext.Current.Server.MapPath("~/App_Data"), ConfigurationManager.AppSettings["players"], ConfigurationManager.AppSettings["playersinfo"])))
+                {
+                    var row = new List<string>();
+
+                    while (reader.ReadRow(row))
+                    {
+                        if (!row.Contains("id"))
+                        {
+                            // Check user role
+                            if (userid.Equals(row[0]) && username.Equals(row[1]) && row[3].Equals(ConfigurationManager.AppSettings["admin"]))
+                                return View();
+                        }
+                    }
+                }
+            }
+            return View("Error");
         }
 
         /// <summary>
@@ -36,8 +55,6 @@ namespace tactgame.com.Controllers
         [HttpPost]
         public JsonResult StockListSearch()
         {
-            var x = Session["USER_ID"];
-            var y = Session["USER_NAME"];
             var csvData = new List<StockModel>();
             var stockNames = new List<string>();
             var csvFloder = stockNamesPath;
@@ -167,66 +184,14 @@ namespace tactgame.com.Controllers
         [HttpPost]
         public JsonResult PlayersSearch()
         {
-            var csvData = new List<PlayerModel>();
-            var csvFloder = System.Web.HttpContext.Current.Server.MapPath("~/App_Data") + "\\" + ConfigurationManager.AppSettings["players"];
-
             try
             {
-                // Get player info
-                foreach (var files in Directory.GetFiles(csvFloder))
-                {
-                    FileInfo info = new FileInfo(files);
-                    var fileName = Path.GetFileName(info.FullName);
-                    // Skip player account info
-                    if (fileName.Equals("player.csv"))
-                        continue;
-                    // Player's portfolio path
-                    var csvFile = string.Format("{0}\\{1}", csvFloder, fileName);
-                    // Read player's portfolio data
-                    using (CSVHelper.CsvFileReader reader = new CSVHelper.CsvFileReader(csvFile))
-                    {
-                        if (fileName.ToLower().Contains("stock"))
-                        {
-                            var stocks = new List<StockModel>();
-                            var playerId = 0;
-
-                            while (reader.ReadRow(searchAll))
-                            {
-                                if (!searchAll[0].ToLower().Equals("id"))
-                                {
-                                    stocks.Add(new StockModel(int.Parse(searchAll[0]),
-                                    searchAll[1].ToUpper(),
-                                    decimal.Parse(searchAll[2]),
-                                    decimal.Parse(searchAll[3]),
-                                    int.Parse(searchAll[4])));
-
-                                    playerId = int.Parse(searchAll[5]);
-                                }
-                            }
-
-                            csvData.Where(p => p.ID == playerId).First().Stocks = stocks;
-                        }
-                        else
-                        {
-                            while (reader.ReadRow(searchAll))
-                            {
-                                if (!searchAll[0].ToLower().Equals("id"))
-                                {
-                                    var player = new PlayerModel(int.Parse(searchAll[0]), searchAll[1], decimal.Parse(searchAll[2]), decimal.Parse(searchAll[3]));
-                                    csvData.Add(player);
-                                }
-                            }
-                        }
-                    }
-                }
-
+                return JSONHelper.CreateJSONResult(true, GetPlayers());
             }
             catch (Exception ex)
             {
                 return JSONHelper.CreateJSONResult(false, ex);
             }
-
-            return JSONHelper.CreateJSONResult(true, csvData);
         }
 
         #region Game Control
@@ -261,11 +226,11 @@ namespace tactgame.com.Controllers
                         // Write turn data
                         writer.AddRow(turn.Value.ToString());
                     }
-
+                    // Update stocks price in market
                     UpdateMarketData(turn.Value);
+                    // Pay dividend to player
+                    PayDividend();
                 }
-
-
             }
             catch (Exception ex)
             {
@@ -364,6 +329,10 @@ namespace tactgame.com.Controllers
 
         #region Private Method
 
+        /// <summary>
+        /// Get stock data (name, price, dividend) that trade in market.
+        /// </summary>
+        /// <returns>The stocks</returns>
         private List<StockModel> GetMarketStocks()
         {
             var csvData = new List<StockModel>();
@@ -393,6 +362,99 @@ namespace tactgame.com.Controllers
         }
 
         /// <summary>
+        /// Get player data (cash and portfolio)
+        /// </summary>
+        /// <returns>The players</returns>
+        private List<PlayerModel> GetPlayers()
+        {
+            var csvData = new List<PlayerModel>();
+
+            try
+            {
+                // Get player info
+                foreach (var files in Directory.GetFiles(PLAYER_FLODER))
+                {
+                    var info = new FileInfo(files);
+                    var fileName = Path.GetFileName(info.FullName);
+                    // Skip player account info
+                    if (fileName.Equals("player.csv"))
+                        continue;
+                    // Player's portfolio path
+                    var csvFile = string.Format("{0}\\{1}", PLAYER_FLODER, fileName);
+                    // Read player's portfolio data
+                    using (var reader = new CSVHelper.CsvFileReader(csvFile))
+                    {
+                        if (fileName.ToLower().Contains("stock"))
+                        {
+                            var stocks = new List<StockModel>();
+                            var playerId = 0;
+
+                            while (reader.ReadRow(searchAll))
+                            {
+                                if (!searchAll[0].ToLower().Equals("id"))
+                                {
+                                    stocks.Add(new StockModel(int.Parse(searchAll[0]),
+                                    searchAll[1].ToUpper(),
+                                    decimal.Parse(searchAll[2]),
+                                    decimal.Parse(searchAll[3]),
+                                    int.Parse(searchAll[4])));
+
+                                    playerId = int.Parse(searchAll[5]);
+                                }
+                            }
+                            // Merge duplicate stocks which has different price
+                            for (var i = 0; i < stocks.Count; i++)
+                            {
+                                var item = stocks[i];
+                                // Find all stock in portfolio with the same id
+                                var duplicateStocks = stocks.Where(p => p.Name.ToUpper() == item.Name.ToUpper());
+
+                                if (stocks.Count() > 1)
+                                {
+                                    // Combine duplicate stock
+                                    decimal newPrice = 0;
+                                    var newVol = 0;
+                                    foreach (var stock in duplicateStocks)
+                                    {
+                                        newPrice += stock.Price * stock.Vol;
+                                        newVol += stock.Vol;
+                                    }
+                                    // Create new stock with avg cost
+                                    var newStock = new StockModel(item.ID, item.Name, newPrice / newVol, 0, newVol);
+
+                                    // Remove all duplicate stocks
+                                    stocks.RemoveAll(p => p.Name.ToUpper() == item.Name.ToUpper());
+
+                                    stocks.Add(newStock);
+                                }
+                            }
+
+                            csvData.Where(p => p.ID == playerId).First().Stocks = stocks;
+                        }
+                        else
+                        {
+                            while (reader.ReadRow(searchAll))
+                            {
+                                if (!searchAll[0].ToLower().Equals("id"))
+                                {
+                                    var player = new PlayerModel(int.Parse(searchAll[0]), searchAll[1], decimal.Parse(searchAll[2]), decimal.Parse(searchAll[3]));
+                                    csvData.Add(player);
+                                }
+                            }
+                        }
+                    }
+                }
+
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+
+            return csvData;
+        }
+
+        /// <summary>
         /// Update all stock data that in market
         /// </summary>
         /// <param name="turn">The board turn</param>
@@ -405,7 +467,7 @@ namespace tactgame.com.Controllers
             var stockNames = new List<string>();
             var csvFile = marketDataPath;
             // Read current market stock
-            using (CSVHelper.CsvFileReader reader = new CSVHelper.CsvFileReader(csvFile))
+            using (var reader = new CSVHelper.CsvFileReader(csvFile))
             {
                 while (reader.ReadRow(searchAll))
                 {
@@ -430,7 +492,7 @@ namespace tactgame.com.Controllers
 
                 if (stockNames.Contains(stockName))
                 {
-                    using (CSVHelper.CsvFileReader reader = new CSVHelper.CsvFileReader(info.FullName))
+                    using (var reader = new CSVHelper.CsvFileReader(info.FullName))
                     {
                         while (reader.ReadRow(searchAll))
                         {
@@ -456,7 +518,7 @@ namespace tactgame.com.Controllers
             var indexStock = string.Format("{0},index,{1},{2}", stocksData.Count, indexPrice, indexDiv);
             stocksData.Add(indexStock);
             // Write new market data
-            using (CSVHelper.CsvFileWriter writer = new CSVHelper.CsvFileWriter(csvFile, false))
+            using (var writer = new CSVHelper.CsvFileWriter(csvFile, false))
             {
                 // Write csv column
                 string marketCols = "id,name,price,dividend";
@@ -468,7 +530,6 @@ namespace tactgame.com.Controllers
                     writer.AddRow(item);
                 }
             }
-
         }
 
         /// <summary>
@@ -494,6 +555,51 @@ namespace tactgame.com.Controllers
 
         }
         
+        /// <summary>
+        /// Pay dividend for each stocks
+        /// </summary>
+        private void PayDividend()
+        {
+            // Get stock dividend in market
+            var stocks = GetMarketStocks();
+            // Get player cash and portfolio
+            var players = GetPlayers();
+            // Pay dividend to each player that hold specific stock
+            foreach(var stock in stocks)
+            {
+                foreach(var player in players)
+                {
+                    var portfolio = player.Stocks.Where(p => p.Name.ToLower().Equals(stock.Name.ToLower()));
+                    var total = 0m;
+                    // Update stock dividend in portfolio and calculate summation of dividend
+                    foreach (var item in portfolio)
+                    {
+                        total += item.Vol * stock.Dividend;
+                        item.Dividend = stock.Dividend;
+                    }
+                    //var total = portfolio.Sum(p => p.Vol) * stock.Dividend;
+                    //
+                    player.Cash += total;
+                }
+            }
+            // Update player data
+            foreach (var player in players)
+            {
+                var csvPath = string.Format(@"{0}\{1}.csv", PLAYER_FLODER, player.Name);
+                using (var writer = new CSVHelper.CsvFileWriter(csvPath,false))
+                {
+                    // Header
+                    writer.AddRow("id,name,cash,portfolio");
+                    // New data
+                    writer.AddRow(string.Format("{0},{1},{2},{3}",
+                        player.ID,
+                        player.Name,
+                        player.Cash,
+                        player.Portfolio));
+                }
+            }
+        }
+
         #endregion
     }
 }

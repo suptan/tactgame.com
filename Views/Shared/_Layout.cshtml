@@ -6,6 +6,7 @@
     <title>@ViewBag.Title</title>
     <link href="~/Content/bootstrap.min.css" rel="stylesheet" />
     <link href="~/Content/Site.css" rel="stylesheet" />
+    <link href="~/Content/font-awesome-4.6.3/css/font-awesome.min.css" rel="stylesheet" />
     @Scripts.Render("~/bundles/modernizr")
     <script src="~/Scripts/angular.min.js"></script>
     <script src="~/Scripts/angular-resource.min.js"></script>
@@ -15,7 +16,7 @@
 </head>
 <body>
     <div class="navbar navbar-inverse navbar-fixed-top">
-        <div class="container">
+        <div>
             <div class="navbar-header">
                 <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
                     <span class="icon-bar"></span>
@@ -27,7 +28,6 @@
             <div class="navbar-collapse collapse">
                 <ul class="nav navbar-nav">
                     <li>@Html.ActionLink("Home", "Index", "Home")</li>
-                    <li>@Html.ActionLink("GM", "Index", "GM")</li>
                     @*<li>@Html.ActionLink("Home", "Index", "Home")</li>
                     <li>@Html.ActionLink("About", "About", "Home")</li>
                     <li>@Html.ActionLink("Contact", "Contact", "Home")</li>*@
@@ -38,11 +38,11 @@
     </div>
     <div class="container body-content">
         @RenderBody()
-        <hr />
-        <footer>
-            <p>&copy; @DateTime.Now.Year - Tact School</p>
-        </footer>
     </div>
+    <hr />
+    <footer class="container">
+        <p>&copy; @DateTime.Now.Year - Tact School</p>
+    </footer>
 
     @RenderSection("scripts", required: false)
 </body>

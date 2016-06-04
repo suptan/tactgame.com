@@ -10,15 +10,11 @@ namespace tactgame.com.Controllers
     {
         public ActionResult Index()
         {
-            Session["USER_ID"] = 0;
-            Session["USER_NAME"] = "KhunTact";
             return View();
         }
 
         public ActionResult About()
         {
-            Session["USER_ID"] = 0;
-            Session["USER_NAME"] = "KhunTact";
             ViewBag.Message = "Your application description page.";
 
             return View();
