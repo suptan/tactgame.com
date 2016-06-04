@@ -178,6 +178,8 @@
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
+    <Compile Include="Helpers\Constant.cs" />
+    <Compile Include="Helpers\FullControlMarket.cs" />
     <Compile Include="Helpers\CSVHelper.cs" />
     <Compile Include="Helpers\JSONHelper.cs" />
     <Compile Include="Helpers\ObjectFilter.cs" />
@@ -200,6 +202,9 @@
     <Content Include="Content\font-awesome-4.6.3\css\font-awesome.min.css" />
     <Content Include="Content\font-awesome-4.6.3\fonts\fontawesome-webfont.svg" />
     <Content Include="Content\font-awesome-4.6.3\HELP-US-OUT.txt" />
+    <Content Include="Content\img\8bcLQqF.png" />
+    <Content Include="Content\login.css" />
+    <Content Include="Content\tableSite.css" />
     <Content Include="favicon.ico" />
     <Content Include="fonts\glyphicons-halflings-regular.svg" />
     <Content Include="Global.asax" />

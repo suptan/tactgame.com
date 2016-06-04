@@ -7,6 +7,9 @@
     <section id="content">
         <form>
             <h1>Login</h1>
+            <div class="alert alert-danger" ng-if="loginErrorMsg">
+                <strong>{{ loginErrorMsg }}</strong>
+            </div>
             <div>
                 <input type="text" placeholder="Username" required="" id="username" ng-model="username" ng-pattern="userRegex"/>
             </div>

@@ -23,6 +23,10 @@ namespace tactgame.com.Controllers
         /// <returns></returns>
 		public ActionResult Index()
         {
+            //var verifyUser = CheckUnAuthorize();
+            //if (verifyUser != null)
+            //    return verifyUser;
+
             var userid = Session["USER_ID"].ToString();
             var username = Session["USER_NAME"].ToString();
 
@@ -104,6 +108,10 @@ namespace tactgame.com.Controllers
         [HttpPost]
         public JsonResult ChangeStockInMarket(string stockName, bool isAdd)
         {
+            var verifyUser = CheckUnAuthorize();
+            if (verifyUser != null)
+                return verifyUser;
+
             var csvData = new List<StockModel>();
             var csvFile = marketDataPath;
 
@@ -135,19 +143,7 @@ namespace tactgame.com.Controllers
                             writer.AddRow(string.Format("0,{0},{1},{2}", item.Name, item.Price, item.Dividend));
                         }
                     }
-
-                    // Read stocks data (price, dividend) at current turn
-                    //using (CSVHelper.CsvFileReader reader = new CSVHelper.CsvFileReader(csvFile))
-                    //{
-                    //    while (reader.ReadRow(searchAll))
-                    //    {
-                    //        if (!searchAll.Contains("id"))
-                    //        {
-                    //            // Create stock model data from csv
-                    //            csvData.Add(new StockModel(int.Parse(searchAll[0]), searchAll[1].ToUpper(), decimal.Parse(searchAll[2]), decimal.Parse(searchAll[3])));
-                    //        }
-                    //    }
-                    //}
+                    
                 }
 
                 // Find current turn
@@ -199,6 +195,10 @@ namespace tactgame.com.Controllers
         [HttpPost]
         public JsonResult NextTurn()
         {
+            var verifyUser = CheckUnAuthorize();
+            if (verifyUser != null)
+                return verifyUser;
+
             int? turn = null;
             var csvFile = turnPath;
 
@@ -271,6 +271,10 @@ namespace tactgame.com.Controllers
         [HttpPost]
         public JsonResult ResetTurn()
         {
+            var verifyUser = CheckUnAuthorize();
+            if (verifyUser != null)
+                return verifyUser;
+
             int turn = 1;
             var csvFile = turnPath;
 
@@ -368,6 +372,7 @@ namespace tactgame.com.Controllers
         private List<PlayerModel> GetPlayers()
         {
             var csvData = new List<PlayerModel>();
+            var playerId = 0;
 
             try
             {
@@ -387,7 +392,6 @@ namespace tactgame.com.Controllers
                         if (fileName.ToLower().Contains("stock"))
                         {
                             var stocks = new List<StockModel>();
-                            var playerId = 0;
 
                             while (reader.ReadRow(searchAll))
                             {
@@ -398,8 +402,6 @@ namespace tactgame.com.Controllers
                                     decimal.Parse(searchAll[2]),
                                     decimal.Parse(searchAll[3]),
                                     int.Parse(searchAll[4])));
-
-                                    playerId = int.Parse(searchAll[5]);
                                 }
                             }
                             // Merge duplicate stocks which has different price
@@ -439,6 +441,7 @@ namespace tactgame.com.Controllers
                                 {
                                     var player = new PlayerModel(int.Parse(searchAll[0]), searchAll[1], decimal.Parse(searchAll[2]), decimal.Parse(searchAll[3]));
                                     csvData.Add(player);
+                                    playerId = player.ID;
                                 }
                             }
                         }
@@ -598,6 +601,42 @@ namespace tactgame.com.Controllers
                         player.Portfolio));
                 }
             }
+        }
+
+        #endregion
+
+        #region Security
+
+        private JsonResult CheckUnAuthorize()
+        {
+            // If access by not login redirect to login
+            if (Session["USER_ID"] == null || Session["USER_NAME"] == null)
+                return JSONHelper.CreateJSONResult(false, Constant.RedirectPath.HOME_URI);
+
+            var userId = Session["USER_ID"].ToString();
+            var row = new List<string>();
+            var isRole = false;
+            using (var reader = new CSVHelper.CsvFileReader(Constant.CsvFilesPath.PLAYER_PATH))
+            {
+                while (reader.ReadRow(row))
+                {
+                    if (!row.Contains("id"))
+                    {
+                        if (row[0].Equals(userId) && row[3].Equals(ConfigurationManager.AppSettings["admin"]))
+                        {
+                            isRole = true;
+                            break;
+                        }
+                    }
+                }
+            }
+            // Change the Result to point back to Home/Index
+            if (!isRole)
+            {
+                return JSONHelper.CreateJSONResult(false, "");
+            }
+
+            return null;
         }
 
         #endregion

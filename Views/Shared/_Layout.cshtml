@@ -7,6 +7,7 @@
     <link href="~/Content/bootstrap.min.css" rel="stylesheet" />
     <link href="~/Content/Site.css" rel="stylesheet" />
     <link href="~/Content/font-awesome-4.6.3/css/font-awesome.min.css" rel="stylesheet" />
+    <link href="~/Content/tableSite.css" rel="stylesheet" />
     @Scripts.Render("~/bundles/modernizr")
     <script src="~/Scripts/angular.min.js"></script>
     <script src="~/Scripts/angular-resource.min.js"></script>
@@ -16,19 +17,19 @@
 </head>
 <body>
     <div class="navbar navbar-inverse navbar-fixed-top">
-        <div>
+        <div class="container-fluid">
             <div class="navbar-header">
                 <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
                     <span class="icon-bar"></span>
                     <span class="icon-bar"></span>
                     <span class="icon-bar"></span>
                 </button>
-                @Html.ActionLink("Application name", "Index", "Home", new { area = "" }, new { @class = "navbar-brand" })
+                @Html.ActionLink("Tact School Game", "Index", "Home", new { area = "" }, new { @class = "navbar-brand" })
             </div>
             <div class="navbar-collapse collapse">
                 <ul class="nav navbar-nav">
-                    <li>@Html.ActionLink("Home", "Index", "Home")</li>
                     @*<li>@Html.ActionLink("Home", "Index", "Home")</li>
+                    <li>@Html.ActionLink("Home", "Index", "Home")</li>
                     <li>@Html.ActionLink("About", "About", "Home")</li>
                     <li>@Html.ActionLink("Contact", "Contact", "Home")</li>*@
                 </ul>

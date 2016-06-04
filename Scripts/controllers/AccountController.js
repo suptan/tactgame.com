@@ -25,7 +25,7 @@
                 console.log(response);
             });
         } else {
-            $scope.loginErrorMsg = "Username and Password are not matched!!!";
+            $scope.loginErrorMsg = "Username or password is incorrect";
         }
         $this.button('reset');
     }

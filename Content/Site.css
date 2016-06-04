@@ -30,7 +30,7 @@ form:after {
 	clear: both;
 	visibility: hidden;
 }
-.container { margin: 25px auto; position: relative; width: 900px; }
+.container { margin: 25px auto; position: relative; }
 
 #content {
 	background: #f9f9f9;
@@ -139,7 +139,7 @@ form:after {
 	-ms-transition: all 0.5s ease;
 	-o-transition: all 0.5s ease;
 	transition: all 0.5s ease;
-	background: #eae7e7 url(http://cssdeck.com/uploads/media/items/8/8bcLQqF.png) no-repeat;
+	background: #eae7e7 url(img/8bcLQqF.png) no-repeat;
 	border: 1px solid #c8c8c8;
 	color: #777;
 	font: 13px Helvetica, Arial, sans-serif;
@@ -225,7 +225,7 @@ form:after {
 	padding: 15px 0;
 }
 .button a {
-	background: url(http://cssdeck.com/uploads/media/items/8/8bcLQqF.png) 0 -112px no-repeat;
+	background: url(img/8bcLQqF.png) 0 -112px no-repeat;
 	color: #7E7E7E;
 	font-size: 17px;
 	padding: 2px 0 2px 40px;

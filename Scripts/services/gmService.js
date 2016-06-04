@@ -13,11 +13,11 @@
         return $http.post("/GM/ChangeStockInMarket", {
             stockName: name,
             isAdd: flag
-        })
-            .success(function (response) {
-                successCallback(response);
-            }).error(function (response) {
-                errorCallback(response);
-            });
+        }).then(successCallback, errorCallback);
+            //.success(function (response) {
+            //    successCallback(response);
+            //}).error(function (response) {
+            //    errorCallback(response);
+            //});
     }
 }]);

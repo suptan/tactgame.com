@@ -1,14 +1,6 @@
 ﻿using System;
-using System.Globalization;
 using System.Linq;
-using System.Security.Claims;
-using System.Threading.Tasks;
-using System.Web;
 using System.Web.Mvc;
-using Microsoft.AspNet.Identity;
-using Microsoft.AspNet.Identity.Owin;
-using Microsoft.Owin.Security;
-using tactgame.com.Models;
 using tactgame.com.Helpers;
 using System.Configuration;
 using System.Collections.Generic;
@@ -18,6 +10,7 @@ namespace tactgame.com.Controllers
 {
     public class AccountController : Controller
     {
+        private readonly string PLAYER_FOLDER = string.Format(@"{0}\{1}", System.Web.HttpContext.Current.Server.MapPath("~/App_Data"), ConfigurationManager.AppSettings["players"]);
         private readonly string PLAYERS_PATH = string.Format(@"{0}\{1}\{2}", System.Web.HttpContext.Current.Server.MapPath("~/App_Data"), ConfigurationManager.AppSettings["players"], ConfigurationManager.AppSettings["playersinfo"]);
 
         public ActionResult SignUp()
@@ -36,6 +29,11 @@ namespace tactgame.com.Controllers
         {
             try
             {
+                // Validate existing user
+                var players = Directory.GetFiles(PLAYER_FOLDER);
+                var playerExists = players.Contains(username);
+
+                if (playerExists) return JSONHelper.CreateJSONResult(false, "Username already exists.");
                 // Lastest player id
                 var playerId = -1;
                 // Check lastest player id
@@ -52,9 +50,29 @@ namespace tactgame.com.Controllers
                 }
                 // New player id
                 playerId++;
-                using(var writer = new CSVHelper.CsvFileWriter(PLAYERS_PATH))
+                using (var writer = new CSVHelper.CsvFileWriter(PLAYERS_PATH))
                 {
                     writer.AddRow(string.Format("{0},{1},{2},{3}", playerId, username, password, ConfigurationManager.AppSettings["investor"]));
+                }
+                // Create player account
+                var playerPath = string.Format(@"{0}\{1}.csv", PLAYER_FOLDER, username);
+                System.IO.File.Create(playerPath).Dispose();
+
+                using (var writer = new CSVHelper.CsvFileWriter(playerPath, false))
+                {
+                    // Header columns
+                    writer.AddRow("id,name,cash,portfolio");
+                    // Player data
+                    writer.AddRow(string.Format("{0},{1},{2},{3}", playerId, username, ConfigurationManager.AppSettings["startCash"], 0.00));
+                }
+                // Create player portfolio
+                var playerPortfolioPath = string.Format(@"{0}\{1}stock.csv", PLAYER_FOLDER, username);
+                System.IO.File.Create(playerPortfolioPath).Dispose();
+
+                using (var writer = new CSVHelper.CsvFileWriter(playerPortfolioPath, false))
+                {
+                    // Header columns
+                    writer.AddRow("id,name,price,dividend,volumn,playerid");
                 }
             }
             catch (Exception e)

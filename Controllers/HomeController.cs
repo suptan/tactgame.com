@@ -10,6 +10,8 @@ namespace tactgame.com.Controllers
     {
         public ActionResult Index()
         {
+            Session["USER_ID"] = null;
+            Session["USER_NAME"] = null;
             return View();
         }
 

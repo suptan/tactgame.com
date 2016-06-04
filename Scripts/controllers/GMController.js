@@ -13,17 +13,19 @@
             // Create list of stocks name
             angular.forEach(response.ResponseMessage, function (value, key) {
                 $scope.stockList.push(value.Name);
-                $scope.stockListUsed.push(false);
+                $scope.stockListUsed.push(true);
             });
         }, function (response) {
             console.log(response);
+        }).then(function () {
+            // Initialize market data
+            updateMarketData();
+
+            // Set score board
+            playerData();
         });
 
-        // Initialize market data
-        updateMarketData();
-
-        // Set score board
-        playerData();
+        
     }
 
     // Change game turn
@@ -107,7 +109,16 @@
 
     function changeStock(stockName, isAdd) {
         gmService.changeStockInMarket(stockName, isAdd, function (response) {
-            $scope.marketData = response.ResponseMessage;
+            // Use http post with then get different json format
+            if (response.data.IsSuccess) {
+                $scope.marketData = response.data.ResponseMessage;
+            } else { // Error from process
+                // If error is redirect
+                if (response.data.ResponseMessage.uri) {
+                    $(location).attr('href', response.uri);
+                }
+
+            }
         }, function (response) {
             console.log(response);
         });
@@ -127,8 +138,6 @@
             // Calculate summation of investment
             angular.forEach($scope.playerList, function (value, key) {
                 angular.forEach(value.Stocks, function (value, key) {
-                    // Calculate total invest
-                    //value.Amount = value.Price * value.Vol;
                     // Calculate stock market price
                     for (var i = 0; i < $scope.marketData.length; i++) {
                         if ($scope.marketData[i].Name === value.Name) {
