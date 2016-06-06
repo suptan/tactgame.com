@@ -2,11 +2,12 @@
     ViewBag.Title = "Tact School Game";
 }
 
+<link href="~/Content/player.css" rel="stylesheet" />
 <div ng-app="tactSchoolGameApp" ng-controller="PlayerCtrl" ng-init="init()">
     <div class="row col-xs-12 col-sm-12 col-md-12 col-lg-12">
-        <div class="col-xs-4 col-sm-4 col-md-4 col-lg-4">
+        <div class="table-responsive col-xs-4 col-sm-4 col-md-4 col-lg-4">
             <h2>Stock Trading</h2>
-            <table border="1" class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+            <table class="responstable table-hover">
                 <tr>
                     <th>Name</th>
                     <th>Price</th>
@@ -19,37 +20,34 @@
                 </tr>
             </table>
         </div>
-        <div class="col-xs-8 col-sm-8 col-md-8 col-lg-8">
+        <div class="table-responsive col-xs-8 col-sm-8 col-md-8 col-lg-8">
             <h2>Portfolio</h2>
-            <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
-                @*<p><span>Cash</span> : {{ item.Cash | currency:'฿' }} <span>Portfolio</span> : {{ item.Portfolio | currency:'฿' }}</p>*@
-                <table class="col-xs-12 col-sm-12 col-md-12 col-lg-12" ng-model="marketData">
-                    <thead>
-                        <tr>
-                            <th>Name</th>
-                            <th>Volume</th>
-                            <th>Avg Price</th>
-                            <th>Amount</th>
-                            <th>Market Price</th>
-                            <th>Market Value</th>
-                            <th>Profit/Loss</th>
-                            <th>Dividend</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr ng-repeat="stock in portfolio">
-                            <td>{{ stock.Name }}</td>
-                            <td>{{ stock.Vol }}</td>
-                            <td>{{ stock.Price | currency:'฿' }}</td>
-                            <td>{{ getMultiply(stock.Vol, stock.Price) | currency:'฿' }}</td>
-                            <td>{{ stock.MarketPrice | currency:'฿' }}</td>
-                            <td>{{ getMultiply(stock.Vol, stock.MarketPrice) | currency:'฿' }}</td>
-                            <td>{{ getDiff(getMultiply(stock.Vol, stock.MarketPrice), getMultiply(stock.Vol, stock.Price)) | currency:'฿'}}</td>
-                            <td>{{ getMultiply(stock.Vol, stock.Dividend) | currency:'฿' }}</td>
-                        </tr>
-                    </tbody>
-                </table>
-            </div>
+            <table class="responstable" ng-model="marketData">
+                <thead>
+                    <tr>
+                        <th>Name</th>
+                        <th>Volume</th>
+                        <th>Avg Price</th>
+                        <th>Amount</th>
+                        <th>Market Price</th>
+                        <th>Market Value</th>
+                        <th>Profit/Loss</th>
+                        <th>Dividend</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr ng-repeat="stock in portfolio">
+                        <td>{{ stock.Name }}</td>
+                        <td>{{ stock.Vol | number:0 }}</td>
+                        <td>{{ stock.Price | currency:'฿' }}</td>
+                        <td>{{ getMultiply(stock.Vol, stock.Price) | currency:'฿' }}</td>
+                        <td>{{ stock.MarketPrice | currency:'฿' }}</td>
+                        <td>{{ getMultiply(stock.Vol, stock.MarketPrice) | currency:'฿' }}</td>
+                        <td>{{ getDiff(getMultiply(stock.Vol, stock.MarketPrice), getMultiply(stock.Vol, stock.Price)) | currency:'฿'}}</td>
+                        <td>{{ getMultiply(stock.Vol, stock.Dividend) | currency:'฿' }}</td>
+                    </tr>
+                </tbody>
+            </table>
         </div>
     </div>
     <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
@@ -84,8 +82,67 @@
         </div>
     </div>
     <div class="row col-xs-12 col-sm-12 col-md-12 col-lg-12">
-        <button type="button" class="btn btn-primary" style="float:right;" ng-click="stockTrade()">CONFIRM</button>
+        <button type="button" class="btn btn-primary" style="float:right;" ng-click="stockTrade($event)">CONFIRM</button>
     </div>
+    <div style="visibility: hidden">
+        <div class="md-dialog-container" id="myDialog">
+            <md-dialog layout-padding>
+                <h2>Pre-Rendered Dialog</h2>
+                <p>
+                    This is a pre-rendered dialog, which means that <code>$mdDialog</code> doesn't compile its
+                    template on each opening.
+                    <br /><br />
+                    The Dialog Element is a static element in the DOM, which is just visually hidden.<br />
+                    Once the dialog opens, we just fetch the element from the DOM into our dialog and upon close
+                    we restore the element back into its old DOM position.
+                </p>
+            </md-dialog>
+        </div>
+    </div>
+    <script type="text/ng-template" id="tradeDialog.tpl.cshtml">
+        <md-dialog aria-label="label" ng-cloak>
+            <form>
+                <md-dialog-content>
+                    <div class="md-dialog-content">
+                        <h2>Place Order Confirmation</h2>
+                    </div>
+                    <div class="v">
+                        <table class="confirm-dialog-table">
+                            <tr>
+                                <td>Buy:</td>
+                                <td>{{ stockTradeSelected }}</td>
+                            </tr>
+                            <tr>
+                                <td>Volume:</td>
+                                <td>{{ tradeVol | number:0 }}</td>
+                            </tr>
+                            <tr>
+                                <td>Price:</td>
+                                <td>{{ tradePrice | currency:'฿' }}</td>
+                            </tr>
+                            <tr>
+                                <td>Total:</td>
+                                <td>{{ getMultiply(tradeVol, tradePrice) | currency:'฿' }}</td>
+                            </tr>
+                            <tr><td>&nbsp;</td></tr>
+                            <tr>
+                                <td>Commission:</td>
+                                <td>{{ commissionRate * getMultiply(tradeVol, tradePrice) | currency:'฿' }}</td>
+                            </tr>
+                        </table>
+                    </div>
+                </md-dialog-content>
+                <md-dialog-actions layout="row">
+                    <md-button ng-click="cancel()">
+                        Cancel
+                    </md-button>
+                    <md-button class="btn btn-default" ng-click="confirm()">
+                        Confirm
+                    </md-button>
+                </md-dialog-actions>
+            </form>
+        </md-dialog>
+    </script>
 </div>
 
 <script src="~/Scripts/app.js"></script>

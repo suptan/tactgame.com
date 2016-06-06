@@ -8,4 +8,4 @@
                             })
                             .otherwise({});
                     }]);*/
-var app = angular.module('tactSchoolGameApp', []);
+var app = angular.module('tactSchoolGameApp', ['ngMaterial']);

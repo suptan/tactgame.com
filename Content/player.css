@@ -1,0 +1,7 @@
+﻿.confirm-dialog-table {
+    margin: 0 auto;
+}
+
+.confirm-dialog-table tr td:first-child{
+    text-align: right;
+}

@@ -37,4 +37,12 @@
             });
     }
 
+    this.searchCommissionRate = function (successCallback, errorCallback) {
+        return $http.post("/Player/CommissionRateSearch", {})
+            .success(function (response) {
+                successCallback(response);
+            }).error(function (response) {
+                errorCallback(response);
+            });
+    }
 }]);

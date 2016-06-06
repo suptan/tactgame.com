@@ -23,6 +23,11 @@ namespace tactgame.com.Controllers
         // GET: Player
         public ActionResult Index()
         {
+            // When not login redirect to login page
+            var verifyUser = CheckUnAuthorize();
+            if (verifyUser != null)
+                return RedirectToAction("Index", "Home");
+
             return View();
         }
 
@@ -32,12 +37,6 @@ namespace tactgame.com.Controllers
         /// <returns>The portfolio</returns>
         public JsonResult PortfolioSearch()
         {
-            // TEMP
-            //Session["USER_ID"] = "1";
-            //Session["USER_NAME"] = "playerA";
-            //playerPortfolioPath = string.Format("{0}\\{1}{2}", PLAYER_NAMES_PATH, Session["USER_NAME"], PORTFOLIO_FILE_FORMAT);
-            //playerPath = string.Format("{0}\\{1}.csv", PLAYER_NAMES_PATH, Session["USER_NAME"]);
-
             PlayerModel playerData = null;
             var csvData = new List<StockModel>();
 
@@ -88,9 +87,11 @@ namespace tactgame.com.Controllers
         [HttpPost]
         public JsonResult BuyStock(int id, string name, int vol)
         {
-            // Check if user already logged in
-            //if (Session["username"] == null)
-            //    return;
+            // When not login redirect to login page
+            var verifyUser = CheckUnAuthorize();
+            if (verifyUser != null)
+                return verifyUser;
+
             if (!IsMarketOpened())
                 return JSONHelper.CreateJSONResult(false, "Market is closed for trade.");
 
@@ -163,9 +164,11 @@ namespace tactgame.com.Controllers
         /// <returns></returns>
         public JsonResult SellStock(int id, string name, int vol)
         {
-            // Check if user already logged in
-            //if (Session["username"] == null)
-            //    return;
+            // When not login redirect to login page
+            var verifyUser = CheckUnAuthorize();
+            if (verifyUser != null)
+                return verifyUser;
+
             if (!IsMarketOpened())
                 return JSONHelper.CreateJSONResult(false, "Market is closed for trade.");
 
@@ -216,7 +219,7 @@ namespace tactgame.com.Controllers
             // Update player data
             var player = GetPlayerData();
             player.Cash += amount;
-            player.Portfolio = portfolio.Sum(p => p.Price * p.Vol);
+            player.Portfolio = portfolio.Sum(p => p.Price * p.Vol) + player.Cash;
             // Save new player data
             SavePlayerData(player);
 
@@ -243,6 +246,24 @@ namespace tactgame.com.Controllers
             }
 
             return JSONHelper.CreateJSONResult(true, "Trade success");
+        }
+
+        /// <summary>
+        /// Get current commission rate
+        /// </summary>
+        /// <returns></returns>
+        public JsonResult CommissionRateSearch()
+        {
+            try
+            {
+                var result = decimal.Parse(ConfigurationManager.AppSettings["commissionPercent"].ToString());
+
+                return JSONHelper.CreateJSONResult(true, result);
+            }
+            catch(Exception e)
+            {
+                return JSONHelper.CreateJSONResult(false, e.Message);
+            }
         }
 
         #region Private Methods
@@ -350,6 +371,13 @@ namespace tactgame.com.Controllers
                         }
                     }
                 }
+                // Check user role for available stock to trade
+                if(Session["USER_ROLE"] != null)
+                {
+                    // Only Index Fund Manager can trade index
+                    if (!Session["USER_ROLE"].ToString().Equals(ConfigurationManager.AppSettings["indexfunder"]))
+                        csvData.RemoveAll(p => p.Name.ToLower().Equals("index"));
+                }
             }
             catch (Exception ex)
             {
@@ -426,6 +454,51 @@ namespace tactgame.com.Controllers
             }
 
             return result;
+        }
+
+        #endregion
+
+        #region Security
+
+        /// <summary>
+        /// Verify user role
+        /// </summary>
+        /// <returns></returns>
+        private JsonResult CheckUnAuthorize()
+        {
+            var traderRoles = new string[] {
+                ConfigurationManager.AppSettings["investor"],
+                ConfigurationManager.AppSettings["indexfunder"]
+            };
+            // If access by not login redirect to login
+            if (Session["USER_ID"] == null || Session["USER_NAME"] == null)
+                return JSONHelper.CreateJSONResult(false, new { uri = Constant.RedirectPath.HOME_URI });
+
+            var userId = Session["USER_ID"].ToString();
+            var row = new List<string>();
+            var isRole = false;
+            using (var reader = new CSVHelper.CsvFileReader(Constant.CsvFilesPath.PLAYER_PATH))
+            {
+                while (reader.ReadRow(row))
+                {
+                    if (!row.Contains("id"))
+                    {
+                        // Check login role
+                        if (row[0].Equals(userId) && traderRoles.Contains(row[3]))
+                        {
+                            isRole = true;
+                            break;
+                        }
+                    }
+                }
+            }
+            // Change the Result to point back to Home/Index
+            if (!isRole)
+            {
+                return JSONHelper.CreateJSONResult(false, new { uri = Constant.RedirectPath.HOME_URI });
+            }
+
+            return null;
         }
 
         #endregion

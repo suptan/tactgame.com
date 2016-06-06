@@ -45,6 +45,11 @@ namespace tactgame.com.Models
         private decimal pl;
 
         /// <summary>
+        /// The player role
+        /// </summary>
+        private string role;
+
+        /// <summary>
         /// The stock in player portfolio.
         /// </summary>
         private List<StockModel> stocks = new List<StockModel>();
@@ -104,6 +109,18 @@ namespace tactgame.com.Models
             set { this.pl = value; }
         }
 
+        /// <summary>
+        /// Gets or sets the player role.
+        /// </summary>
+        public string Role
+        {
+            get { return this.role; }
+            set { this.role = value; }
+        }
+
+        /// <summary>
+        /// Gets or sets the stocks in portfolio.
+        /// </summary>
         public List<StockModel> Stocks
         {
             get { return this.stocks; }

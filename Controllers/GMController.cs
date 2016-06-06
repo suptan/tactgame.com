@@ -23,9 +23,9 @@ namespace tactgame.com.Controllers
         /// <returns></returns>
 		public ActionResult Index()
         {
-            //var verifyUser = CheckUnAuthorize();
-            //if (verifyUser != null)
-            //    return verifyUser;
+            var verifyUser = CheckUnAuthorize();
+            if (verifyUser != null)
+                return RedirectToAction("Index", "Home");
 
             var userid = Session["USER_ID"].ToString();
             var username = Session["USER_NAME"].ToString();
@@ -611,7 +611,7 @@ namespace tactgame.com.Controllers
         {
             // If access by not login redirect to login
             if (Session["USER_ID"] == null || Session["USER_NAME"] == null)
-                return JSONHelper.CreateJSONResult(false, Constant.RedirectPath.HOME_URI);
+                return JSONHelper.CreateJSONResult(false, new { uri = Constant.RedirectPath.HOME_URI });
 
             var userId = Session["USER_ID"].ToString();
             var row = new List<string>();
@@ -633,7 +633,7 @@ namespace tactgame.com.Controllers
             // Change the Result to point back to Home/Index
             if (!isRole)
             {
-                return JSONHelper.CreateJSONResult(false, "");
+                return JSONHelper.CreateJSONResult(false, new { uri = Constant.RedirectPath.HOME_URI });
             }
 
             return null;
