@@ -57,6 +57,7 @@ namespace tactgame.com.Controllers
                                 // Set seesion profile
                                 Session["USER_ID"] = int.Parse(row[0]);
                                 Session["USER_NAME"] = row[1];
+                                Session["USER_ROLE"] = row[3];
 
                                 break;
                             }
@@ -83,6 +84,7 @@ namespace tactgame.com.Controllers
         {
             Session["USER_ID"] = null;
             Session["USER_NAME"] = null;
+            Session["USER_ROLE"] = null;
             return RedirectToAction("Index", "Home");
         }
 

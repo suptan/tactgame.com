@@ -2,7 +2,7 @@
     
     $scope.tradeCmds = [{ 'id': 0, 'name': 'Buy' }, { 'id': 1, 'name': 'Sell' }];
     $scope.stocksTrade = new Array();
-    $scope.tradeCmdSelected = 0;
+    $scope.tradeCmdSelected = 'BUY';
     $scope.tradeVol = 0;
     $scope.tradePrice = 0.00;
     $scope.commissionRate = 0.00;
@@ -24,9 +24,9 @@
         }, function (response) {
             console.log(response);
         }).then(function () {
+            // Get player portfolio
+            updatePortfolio();
         });
-        // Get player portfolio
-        updatePortfolio();
         // Get current commission rate
         portfolioService.searchCommissionRate(function (response) {
             $scope.commissionRate = response.ResponseMessage;
@@ -48,18 +48,18 @@
     $scope.changeTradeCmd = function () {
         $scope.stocksTrade = [];
 
-        if ($scope.tradeCmdSelected == 0) {
+        if ($scope.tradeCmdSelected === 'BUY') {
             // Trade stock in market
             angular.forEach($scope.marketData, function (value, key) {
                 $scope.stocksTrade.push({ 'id': value.ID, 'name': value.Name });
             });
-            $scope.stocksTrade.splice($scope.stocksTrade.length - 1, 1);
         } else {
             // Trade stock in portfolio
             angular.forEach($scope.portfolio, function (value, key) {
                 $scope.stocksTrade.push({ 'id': value.ID, 'name': value.Name });
             });
         }
+        $scope.stockTradeSelected = $scope.stocksTrade[0].name;
     }
 
     // Setup stocks price for trade
@@ -111,9 +111,39 @@
 
     // Selected stock to buy when click at stock in market
     $scope.selectedBuyStock = function (index) {
+        // Switch to BUY tab
+        $scope.onClickTab($scope.tabs[0]);
         $scope.stockTradeSelected = $scope.marketData[index].Name;
     }
 
+    // Selected stock to sell when click at stock in portfolio
+    $scope.selectedSellStock = function (index) {
+        // Switch to SELL tab
+        $scope.onClickTab($scope.tabs[1]);
+        $scope.stockTradeSelected = $scope.portfolio[index].Name;
+    }
+
+    //------------//
+    // Trade tabs //
+    //------------//
+    $scope.tabs = [{
+        title: 'BUY'
+    }, {
+        title: 'SELL'
+    }];
+
+    $scope.onClickTab = function (tab) {
+        $scope.tradeCmdSelected = tab.title;
+        $scope.changeTradeCmd();
+    }
+    
+    $scope.isActiveTab = function (tabTitle) {
+        return tabTitle === $scope.tradeCmdSelected;
+    }
+     
+    //------------//
+    // MathHelper //
+    //------------//
     $scope.getMultiply = function (a, b) {
         return a * b;
     }

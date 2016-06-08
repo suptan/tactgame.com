@@ -5,3 +5,43 @@
 .confirm-dialog-table tr td:first-child{
     text-align: right;
 }
+
+.buy-stock-tab {
+    background-color: lightblue;
+}
+
+.sell-stock-tab {
+    background-color: red;
+}
+
+#tradeTabs {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+#tradeTabs li {
+    float: left;
+    border: 1px solid #000;
+    border-bottom-width: 0;
+    margin: 3px 3px 0px 3px;
+    padding: 5px 5px 0px 5px;
+    background-color: #CCC;
+    color: #696969;
+}
+
+.white-bg {
+    background:#ffffff !important;
+}
+
+.top-buffer {
+    margin-top:20px;
+}
+
+.box-effect8
+{
+  	position:relative;       
+    -webkit-box-shadow:0 1px 4px rgba(0, 0, 0, 0.3), 0 0 40px rgba(0, 0, 0, 0.1) inset;
+       -moz-box-shadow:0 1px 4px rgba(0, 0, 0, 0.3), 0 0 40px rgba(0, 0, 0, 0.1) inset;
+            box-shadow:0 1px 4px rgba(0, 0, 0, 0.3), 0 0 40px rgba(0, 0, 0, 0.1) inset;
+}
