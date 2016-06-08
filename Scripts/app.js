@@ -1,11 +1,7 @@
-﻿/*var app = angular.module('tactSchoolGameApp', ['ngRoute', 'GMCtrl', 'stockSearch'])
-                    .config(['$routeProvider', function ($routeProvider) {
-                        $routeProvider
-                            // route for the home page
-                            .when('/', {
-                                templateUrl : '/',
-                                controller : 'GMCtrl'
-                            })
-                            .otherwise({});
-                    }]);*/
-var app = angular.module('tactSchoolGameApp', ['ngMaterial']);
+﻿var app = angular.module('tactSchoolGameApp', ['ngMaterial']);
+
+$("#main-content").mCustomScrollbar({
+    autoHideScrollbar: true,
+    axis: "y", // vertical and horizontal scrollbar
+    theme: "rounded-dark"
+});

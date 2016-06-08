@@ -9,15 +9,16 @@
     <link href="~/Content/font-awesome-4.6.3/css/font-awesome.min.css" rel="stylesheet" />
     <link href="~/Content/tableSite.css" rel="stylesheet" />
     <link href="~/Content/angular-material.css" rel="stylesheet" />
+    <link href="~/Content/jquery.mCustomScrollbar.min.css" rel="stylesheet" />
     @Scripts.Render("~/bundles/modernizr")
     <script src="~/Scripts/angular.min.js"></script>
     <script src="~/Scripts/angular-animate.min.js"></script>
     <script src="~/Scripts/angular-aria.min.js"></script>
     <script src="~/Scripts/angular-messages.min.js"></script>
-    @*<script src="~/Scripts/angular-resource.min.js"></script>*@
     <script src="~/Scripts/angular-route.min.js"></script>
     <script src="~/Scripts/angular-material.min.js"></script>
     <script src="~/Scripts/jquery-2.2.3.min.js"></script>
+    <script src="~/Scripts/jquery.mCustomScrollbar.concat.min.js"></script>
     <script src="~/Scripts/bootstrap.min.js"></script>
     <script src="~/Scripts/app.js"></script>
 </head>
@@ -43,7 +44,7 @@
             </div>
         </div>
     </div>
-    <div class="container body-content">
+    <div id="main-content" class="container content body-content full-height mCustomScrollbar">
         @RenderBody()
     </div>
     <hr />

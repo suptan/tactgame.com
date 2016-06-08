@@ -66,10 +66,10 @@
                             <td>{{ stock.Name }}</td>
                             <td>{{ stock.Vol }}</td>
                             <td>{{ stock.Price | currency:'฿' }}</td>
-                            <td>{{ getMultiply(stock.Vol, stock.Price) | currency:'฿' }}</td>
+                            <td>฿{{ megaNumber(getMultiply(stock.Vol, stock.Price))}}</td>
                             <td>{{ stock.MarketPrice | currency:'฿' }}</td>
-                            <td>{{ getMultiply(stock.Vol, stock.MarketPrice) | currency:'฿' }}</td>
-                            <td>{{ getDiff(getMultiply(stock.Vol, stock.MarketPrice), getMultiply(stock.Vol, stock.Price)) | currency:'฿'}}</td>
+                            <td>฿{{ megaNumber(getMultiply(stock.Vol, stock.MarketPrice)) }}</td>
+                            <td>฿{{ megaNumber(getDiff(getMultiply(stock.Vol, stock.MarketPrice), getMultiply(stock.Vol, stock.Price))) }}</td>
                             <td>{{ getMultiply(stock.Vol, stock.Dividend) | currency:'฿' }}</td>
                         </tr>
                     </tbody>

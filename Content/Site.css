@@ -1,5 +1,5 @@
 ﻿body {
-	background: #DCDDDF;
+    background: #DCDDDF;
 	color: #000;
 	font: 14px Arial;
 	margin: 0 auto;
@@ -30,7 +30,7 @@ form:after {
 	clear: both;
 	visibility: hidden;
 }
-.container { margin: 25px auto; position: relative; }
+.container { background: #DCDDDF; margin: 25px auto; position: relative; }
 
 #content {
 	background: #f9f9f9;
@@ -258,4 +258,9 @@ input,
 select,
 textarea {
     max-width: 280px;
+}
+
+.full-height {
+    height: 80%;
+    overflow-y: auto;
 }

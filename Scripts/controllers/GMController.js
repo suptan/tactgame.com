@@ -88,6 +88,11 @@
         return a - b;
     }
 
+    $scope.megaNumber = function (num) {
+        if (!num) return 0.00;
+        return $filter('megaNumber')(num);
+    }
+
     $scope.$watch('marketData', function () {
         // Update stock market price in score board
         angular.forEach($scope.playerList, function (value, key) {
