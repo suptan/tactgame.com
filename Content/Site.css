@@ -264,3 +264,16 @@ textarea {
     height: 80%;
     overflow-y: auto;
 }
+
+div.center {
+    display: flex;
+    align-items: center;
+}
+
+.text-ellipsis {
+    text-overflow: ellipsis;
+}
+
+.primary-background {
+    background-color: #DCDDDF;
+}

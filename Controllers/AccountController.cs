@@ -31,9 +31,14 @@ namespace tactgame.com.Controllers
             {
                 // Validate existing user
                 var players = Directory.GetFiles(PLAYER_FOLDER);
-                var playerExists = players.Contains(username);
+                // Array contain must be exactly match
+                //var playerExists = players.Contains(username);
 
-                if (playerExists) return JSONHelper.CreateJSONResult(false, "Username already exists.");
+                foreach (var name in players)
+                {
+                    if (players.Contains(name))
+                        return JSONHelper.CreateJSONResult(false, "Username already exists."); 
+                }
                 // Lastest player id
                 var playerId = -1;
                 // Check lastest player id

@@ -315,7 +315,7 @@ namespace tactgame.com.Controllers
                                 var newVol = 0;
                                 foreach (var stock in stocks)
                                 {
-                                    newPrice += stock.Price * (stock.Vol / 100);
+                                    newPrice += stock.Price * stock.Vol;
                                     newVol += stock.Vol;
                                 }
                                 // Create new stock with avg cost

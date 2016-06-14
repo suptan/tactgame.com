@@ -8,6 +8,7 @@
         $scope.userErrorMsg = "";
         $scope.passErrorMsg = "";
         $scope.retyPassErrorMsg = "";
+        $scope.existedMsg = "";
 
         // Check username and password match condition
         $scope.userErrorMsg = $scope.username ? "" : "Username can contain only letters and numbers from 6 - 10 character.";
@@ -19,12 +20,16 @@
         if ($scope.userErrorMsg && $scope.passErrorMsg && $scope.retyPassErrorMsg) return;
 
         signUpService.signUp($scope.username, $scope.password, function (response) {
-            $scope.createdMsg = response.ResponseMessage;
-            // Redirect user to login
-            setInterval(function () {
-                var uri = window.location.origin;
-                $(location).attr('href', uri);
-            }, 2000);
+            if (response.IsSuccess) {
+                $scope.createdMsg = response.ResponseMessage;
+                // Redirect user to login
+                setInterval(function () {
+                    var uri = window.location.origin;
+                    $(location).attr('href', uri);
+                }, 2000);
+            } else {
+                $scope.existedMsg = response.ResponseMessage;
+            }
         }, function (response) {
             console.log(response);
         });

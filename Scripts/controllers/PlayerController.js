@@ -6,6 +6,7 @@
     $scope.tradeVol = 0;
     $scope.tradePrice = 0.00;
     $scope.commissionRate = 0.00;
+    $scope.windowWidth = window.innerWidth;
 
     $scope.init = function () {
         // Update market data
@@ -79,10 +80,21 @@
 
         // Must trade upto a hundrad
         $scope.tradeVol = Math.floor($scope.tradeVol / 100) * 100;
-
+        // Total cost
+        var total = $scope.tradeVol * $scope.tradePrice;
+        // Setup confirmation data
+        $scope.confirmStock = {
+            stockTradeSelected: $scope.stockTradeSelected,
+            tradeVol: $scope.tradeVol,
+            tradePrice: $scope.tradePrice,
+            total: total,
+            commissionRate: $scope.commissionRate * total
+        };
+        //console.log($scope.tradeCmdSelected);
+        //return;
         $mdDialog.show({
             controller: DialogController,
-            scope: $scope,
+            locals: { stock: $scope.confirmStock },
             templateUrl: 'tradeDialog.tpl.cshtml',
             parent: angular.element(document.body),
             targetEvent: ev,
@@ -98,7 +110,11 @@
                     //console.log(response.ResponseMessage);
                     showErrorDialog(ev, response.ResponseMessage);
                 }
-            }, function (response) {
+            }, function (response) { // Error from process
+                // If error is redirect
+                if (response.data.ResponseMessage.uri) {
+                    $(location).attr('href', response.uri);
+                }
                 console.log(response);
             });
 
@@ -121,6 +137,15 @@
         // Switch to SELL tab
         $scope.onClickTab($scope.tabs[1]);
         $scope.stockTradeSelected = $scope.portfolio[index].Name;
+    }
+
+    // Expand/Collapse stock detail
+    $scope.showStockDetail = function (ev, index) {
+        var stock = ev.currentTarget;
+        var detail = $(stock).next();
+        detail.slideToggle(500, function () { });
+
+        $scope.selectedSellStock(index);
     }
 
     //------------//
@@ -150,6 +175,11 @@
 
     $scope.getDiff = function (a, b) {
         return a - b;
+    }
+
+    $scope.megaNumber = function (num) {
+        if (!num) return 0.00;
+        return $filter('megaNumber')(num);
     }
 
     function updatePortfolio() {
@@ -182,7 +212,9 @@
         );
     }
 
-    function DialogController($scope, $mdDialog) {
+    function DialogController($scope, $mdDialog, stock) {
+        $scope.stock = stock;
+
         $scope.hide = function () {
             $mdDialog.hide();
         };

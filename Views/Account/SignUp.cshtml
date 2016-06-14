@@ -8,25 +8,28 @@
             <h1>Sign Up</h1>
             <div>
                 <input type="text" placeholder="Username" required="" ng-model="username" ng-pattern="userRegex" style="background:#eae7e7;"/>
-                <span class="alert alert-danger" ng-if="userErrorMsg">
+                <p class="alert alert-danger" ng-if="userErrorMsg">
                     <strong>{{ userErrorMsg }}</strong>
-                </span>
+                </p>
             </div>
             <div>
                 <input type="password" placeholder="Password" required="" ng-model="password" ng-pattern="passRegex" style="background:#eae7e7;"/>
-                <span class="alert alert-danger" ng-if="passErrorMsg">
+                <p class="alert alert-danger" ng-if="passErrorMsg">
                     <strong>{{ passErrorMsg }}</strong>
-                </span>
+                </p>
             </div>
             <div>
                 <input type="password" placeholder="Re-Password" required="" ng-model="rePassword" ng-pattern="passRegex" style="background:#eae7e7;"/>
-                <span class="alert alert-danger" ng-if="retyPassErrorMsg">
+                <p class="alert alert-danger" ng-if="retyPassErrorMsg">
                     <strong>{{ retyPassErrorMsg }}</strong>
-                </span>
+                </p>
             </div>
-            <div class="alert alert-success" ng-if="createdMsg">
+            <p class="alert alert-danger" ng-if="existedMsg">
+                <strong>{{ existedMsg }}</strong>
+            </p>
+            <p class="alert alert-success" ng-if="createdMsg">
                 <strong>{{ createdMsg }}</strong>
-            </div>
+            </p>
             <div>
                 <input type="submit" ng-click="signUp()" value="Create Account" />
             </div>

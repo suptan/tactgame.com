@@ -10,6 +10,7 @@
     <link href="~/Content/tableSite.css" rel="stylesheet" />
     <link href="~/Content/angular-material.css" rel="stylesheet" />
     <link href="~/Content/jquery.mCustomScrollbar.min.css" rel="stylesheet" />
+    @*@Styles.Render("~/Content/bootstrap.min.css")*@
     @Scripts.Render("~/bundles/modernizr")
     <script src="~/Scripts/angular.min.js"></script>
     <script src="~/Scripts/angular-animate.min.js"></script>
@@ -44,11 +45,11 @@
             </div>
         </div>
     </div>
-    <div id="main-content" class="container content body-content full-height mCustomScrollbar">
+    <div id="main-content" class="container content body-content">
         @RenderBody()
     </div>
     <hr />
-    <footer class="container">
+    <footer class="panel-footer primary-background">
         <p>&copy; @DateTime.Now.Year - Tact School</p>
     </footer>
 

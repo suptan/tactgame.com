@@ -45,3 +45,17 @@
        -moz-box-shadow:0 1px 4px rgba(0, 0, 0, 0.3), 0 0 40px rgba(0, 0, 0, 0.1) inset;
             box-shadow:0 1px 4px rgba(0, 0, 0, 0.3), 0 0 40px rgba(0, 0, 0, 0.1) inset;
 }
+
+.portfolio-header {
+    border-bottom-style: dashed;
+}
+
+.stock-header {
+    margin: 0px auto;
+    border-bottom-style: dashed;
+}
+
+.stock-detail {
+    background-color: #7fffd4;
+    display: none;
+}

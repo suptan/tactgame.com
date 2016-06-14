@@ -5,6 +5,7 @@
         $scope.currentTurn();
         $scope.marketStatus = 'OPENED';
         $scope.marketData = new Array();
+        $scope.windowWidth = window.innerWidth;
 
         // Get market data from json
         stockSearch.searchStockList(function (response) {
@@ -34,7 +35,11 @@
             $scope.currentTurn = response.ResponseMessage;
             updateMarketData();
             playerData();
-        }, function (response) {
+        }, function (response) { // Error from process
+            // If error is redirect
+            if (response.data.ResponseMessage.uri) {
+                $(location).attr('href', response.uri);
+            }
             console.log(response);
         });
     }
@@ -51,7 +56,11 @@
         gameCtrl.resetTurn(function (response) {
             $scope.currentTurn = response.ResponseMessage;
             updateMarketData();
-        }, function (response) {
+        }, function (response) { // Error from process
+            // If error is redirect
+            if (response.data.ResponseMessage.uri) {
+                $(location).attr('href', response.uri);
+            }
             console.log(response);
         });
     }
@@ -59,7 +68,11 @@
     $scope.marketOpen = function () {
         gameCtrl.marketOpen(function (response) {
             $scope.marketStatus = "OPENED";
-        }, function (response) {
+        }, function (response) { // Error from process
+            // If error is redirect
+            if (response.data.ResponseMessage.uri) {
+                $(location).attr('href', response.uri);
+            }
             console.log(response);
         });
     }
@@ -67,7 +80,11 @@
     $scope.marketClose = function () {
         gameCtrl.marketClose(function (response) {
             $scope.marketStatus = "CLOSED";
-        }, function (response) {
+        }, function (response) { // Error from process
+            // If error is redirect
+            if (response.data.ResponseMessage.uri) {
+                $(location).attr('href', response.uri);
+            }
             console.log(response);
         });
     }

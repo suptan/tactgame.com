@@ -22,8 +22,8 @@ app.filter('getById', function () {
     }
 });
 
-app.filter('megaNumber', () => {
-    return (number, fractionSize) => {
+app.filter('megaNumber', function () {
+    return function (number, fractionSize) {
 
         if(number === null) return null;
         if(number === 0) return "0";

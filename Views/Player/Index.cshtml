@@ -5,7 +5,7 @@
 <link href="~/Content/player.css" rel="stylesheet" />
 <div ng-app="tactSchoolGameApp" ng-controller="PlayerCtrl" ng-init="init()">
     <div class="row col-xs-12 col-sm-12 col-md-12 col-lg-12">
-        <div class="table-responsive col-xs-6 col-sm-6 col-md-6 col-lg-6">
+        <div class="table-responsive col-xs-12 col-sm-6 col-md-6 col-lg-6">
             <h2>Stock Trading</h2>
             <table class="responstable table-hover">
                 <tr>
@@ -20,8 +20,8 @@
                 </tr>
             </table>
         </div>
-        <div class="col-xs-6 col-sm-6 col-md-6 col-lg-6">
-            <div class="row col-xs-12 col-sm-12 col-md-12 col-lg-12">
+        <div class="col-xs-12 col-sm-6 col-md-6 col-lg-6">
+            <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
                 <ul class="nav nav-tabs">
                     <li ng-repeat="tab in tabs"
                         ng-class="{active:isActiveTab(tab.title)}"
@@ -30,20 +30,39 @@
                     </li>
                 </ul>
                 <div class="row panel-body col-xs-12 col-sm-12 col-md-12 col-lg-12" ng-class="tradeCmdSelected === 'BUY' ? 'buy-stock-tab': 'sell-stock-tab'">
-                    <div>
-                        STOCK <select ng-options="stock.name as stock.name for stock in stocksTrade" ng-model="stockTradeSelected" ng-change="changeTradePrice()"></select>
+                    <div class="row center panel-body col-xs-12 col-sm-12 col-md-12 col-lg-12">
+                        <div class="col-xs-3 col-sm-3 col-md-3 col-lg-3">
+                            <label for="stocksdd">STOCK</label> 
+                        </div>
+                        <div class="col-xs-9 col-sm-9 col-md-9 col-lg-9">
+                            <select id="stocksdd" class="form-control" ng-options="stock.name as stock.name for stock in stocksTrade" ng-model="stockTradeSelected" ng-change="changeTradePrice()"></select>
+                        </div>
                     </div>
-                    <div>
-                        Price: {{ tradePrice | currency:'฿' }}
+                    <div class="row center form-group col-xs-12 col-sm-12 col-md-12 col-lg-12">
+                        <div class="col-xs-3 col-sm-3 col-md-3 col-lg-3">
+                            <label>PRICE</label>
+                        </div>
+                        <div class="col-xs-9 col-sm-9 col-md-9 col-lg-9">
+                            <label>{{ tradePrice | currency:'฿' }}</label>
+                        </div>
                     </div>
-                    <div>
-                        <label>Vol: </label>
-                        <input type="number" ng-model="tradeVol" min="100" step="100" />
+                    <div class="row center form-group col-xs-12 col-sm-12 col-md-12 col-lg-12">
+                        <div class="col-xs-3 col-sm-3 col-md-3 col-lg-3">
+                            <label>VOL</label>
+                        </div>
+                        <div class="col-xs-9 col-sm-9 col-md-9 col-lg-9">
+                            <input type="number" class="form-control" ng-model="tradeVol" min="100" step="100" />
+                        </div>
                     </div>
-                    <div>
-                        Total: {{ getMultiply(tradePrice, tradeVol) | currency:'฿' }}
+                    <div class="row center form-group col-xs-12 col-sm-12 col-md-12 col-lg-12">
+                        <div class="col-xs-3 col-sm-3 col-md-3 col-lg-3">
+                            <label>TOTAL</label>
+                        </div>
+                        <div class="col-xs-9 col-sm-9 col-md-9 col-lg-9">
+                            <label class="text-ellipsis">{{ getMultiply(tradePrice, tradeVol) | currency:'฿' }}</label>
+                        </div>
                     </div>
-                    <div class="row col-xs-12 col-sm-12 col-md-12 col-lg-12">
+                    <div class="row form-group col-xs-12 col-sm-12 col-md-12 col-lg-12">
                         <button type="button" class="btn btn-primary" style="float:right;" ng-click="stockTrade($event)">CONFIRM</button>
                     </div>
                 </div>
@@ -75,9 +94,79 @@
         </div>
     </div>
     <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
-        <div class="table-responsive">
+        <div class="row table-responsive">
             <h2>Portfolio</h2>
-            <table class="responstable" ng-model="marketData">
+            <div class="col-xs-12 col-sm-12" ng-if="windowWidth < 768">
+                <div class="portfolio-header row">
+                    <div class="col-xs-3 col-sm-3">
+                        <label>Name</label>
+                    </div>
+                    <div class="col-xs-3 col-sm-3">
+                        <label>Vol</label>
+                    </div>
+                    <div class="col-xs-3 col-sm-3">
+                        <label>Avg</label>
+                    </div>
+                    <div class="col-xs-3 col-sm-3">
+                        <label>Market</label>
+                    </div>
+                </div>
+                <div ng-repeat="stock in portfolio" class="row">
+                    <div class="stock-header row" ng-click="showStockDetail($event, $index)">
+                        <div class="col-xs-3 col-sm-3">
+                            <label>{{ stock.Name }}</label>
+                        </div>
+                        <div class="col-xs-3 col-sm-3">
+                            <label>{{ stock.Vol | number:0 }}</label>
+                        </div>
+                        <div class="col-xs-3 col-sm-3">
+                            <label>{{ stock.Price | currency:'฿' }}</label>
+                        </div>
+                        <div class="col-xs-3 col-sm-3">
+                            <label>{{ stock.MarketPrice | currency:'฿' }}</label>
+                        </div>
+                    </div>
+                    <div class="stock-detail row">
+                        <div class="row col-xs-12 col-sm-12">
+                            <div class="col-xs-2 col-sm-2">
+                                <label>Buy Vol</label>
+                            </div>
+                            <div class="col-xs-4 col-sm-4">
+                                <label>{{ stock.Vol | number:0 }}</label>
+                            </div>
+                            <div class="col-xs-2 col-sm-2">
+                                <label>Cost</label>
+                            </div>
+                            <div class="col-xs-4 col-sm-4">
+                                <label>{{ getMultiply(stock.Vol, stock.Price) | currency:'฿' }}</label>
+                            </div>
+                        </div>
+                        <div class="row col-xs-12 col-sm-12">
+                            <div class="col-xs-2 col-sm-2">
+                                <label>Actual Vol</label>
+                            </div>
+                            <div class="col-xs-4 col-sm-4">
+                                <label>{{ stock.Vol | number:0 }}</label>
+                            </div>
+                            <div class="col-xs-2 col-sm-2">
+                                <label>Market Value</label>
+                            </div>
+                            <div class="col-xs-4 col-sm-4">
+                                <label>{{ getMultiply(stock.Vol, stock.MarketPrice) | currency:'฿' }}</label>
+                            </div>
+                        </div>
+                        <div class="row col-xs-12 col-sm-12">
+                            <div class="col-xs-4 col-sm-4">
+                                <label>Profit/Loss</label>
+                            </div>
+                            <div class="col-xs-8 col-sm-8">
+                                <label>{{ getDiff(getMultiply(stock.Vol, stock.MarketPrice), getMultiply(stock.Vol, stock.Price)) | currency:'฿' }}</label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <table class="responstable" ng-model="marketData" ng-if="windowWidth > 767">
                 <thead>
                     <tr>
                         <th>Name</th>
@@ -86,8 +175,8 @@
                         <th>Amount</th>
                         <th>Market Price</th>
                         <th>Market Value</th>
-                        <th>Profit/Loss</th>
-                        <th>Dividend</th>
+                        <th>Profit / Loss</th>
+                        <th>DIV</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -95,10 +184,10 @@
                         <td ng-click="selectedSellStock($index)">{{ stock.Name }}</td>
                         <td>{{ stock.Vol | number:0 }}</td>
                         <td>{{ stock.Price | currency:'฿' }}</td>
-                        <td>{{ getMultiply(stock.Vol, stock.Price) | currency:'฿' }}</td>
+                        <td>฿{{ getMultiply(stock.Vol, stock.Price) | megaNumber:2 }}</td>
                         <td>{{ stock.MarketPrice | currency:'฿' }}</td>
-                        <td>{{ getMultiply(stock.Vol, stock.MarketPrice) | currency:'฿' }}</td>
-                        <td>{{ getDiff(getMultiply(stock.Vol, stock.MarketPrice), getMultiply(stock.Vol, stock.Price)) | currency:'฿'}}</td>
+                        <td>฿{{ getMultiply(stock.Vol, stock.MarketPrice) | megaNumber:2 }}</td>
+                        <td>฿{{ getDiff(getMultiply(stock.Vol, stock.MarketPrice), getMultiply(stock.Vol, stock.Price)) | megaNumber:2 }}</td>
                         <td>{{ getMultiply(stock.Vol, stock.Dividend) | currency:'฿' }}</td>
                     </tr>
                 </tbody>
@@ -131,24 +220,24 @@
                         <table class="confirm-dialog-table">
                             <tr>
                                 <td>Buy:</td>
-                                <td>{{ stockTradeSelected }}</td>
+                                <td>{{ stock.stockTradeSelected }}</td>
                             </tr>
                             <tr>
                                 <td>Volume:</td>
-                                <td>{{ tradeVol | number:0 }}</td>
+                                <td>{{ stock.tradeVol | number:0 }}</td>
                             </tr>
                             <tr>
                                 <td>Price:</td>
-                                <td>{{ tradePrice | currency:'฿' }}</td>
+                                <td>{{ stock.tradePrice | currency:'฿' }}</td>
                             </tr>
                             <tr>
                                 <td>Total:</td>
-                                <td>{{ getMultiply(tradeVol, tradePrice) | currency:'฿' }}</td>
+                                <td>{{ stock.total | currency:'฿' }}</td>
                             </tr>
                             <tr><td>&nbsp;</td></tr>
                             <tr>
                                 <td>Commission:</td>
-                                <td>{{ commissionRate * getMultiply(tradeVol, tradePrice) | currency:'฿' }}</td>
+                                <td>{{ stock.commissionRate | currency:'฿' }}</td>
                             </tr>
                         </table>
                     </div>

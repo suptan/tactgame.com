@@ -21,7 +21,7 @@
     this.stockTrade = function (tradeCmd ,id, stockName, stockVol, successCallback, errorCallback) {
         var uri = "/Player/BuyStock";
 
-        if (tradeCmd == 1) {
+        if (tradeCmd.toLowerCase() === 'sell') {
             uri = "/Player/SellStock";
         }
 

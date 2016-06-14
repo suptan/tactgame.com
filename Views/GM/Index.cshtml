@@ -42,7 +42,7 @@
                 </table>
             </div>
         </div>
-    <div class="row">
+    <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
         <h2>Score Board</h2>
         <div ng-repeat="item in playerList" ng-model="playerList">
             <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
@@ -64,9 +64,9 @@
                     <tbody>
                         <tr ng-repeat="stock in item.Stocks">
                             <td>{{ stock.Name }}</td>
-                            <td>{{ stock.Vol }}</td>
+                            <td>{{ stock.Vol | number:0 }}</td>
                             <td>{{ stock.Price | currency:'฿' }}</td>
-                            <td>฿{{ megaNumber(getMultiply(stock.Vol, stock.Price))}}</td>
+                            <td>฿{{ getMultiply(stock.Vol, stock.Price) | megaNumber:0 }}</td>
                             <td>{{ stock.MarketPrice | currency:'฿' }}</td>
                             <td>฿{{ megaNumber(getMultiply(stock.Vol, stock.MarketPrice)) }}</td>
                             <td>฿{{ megaNumber(getDiff(getMultiply(stock.Vol, stock.MarketPrice), getMultiply(stock.Vol, stock.Price))) }}</td>
