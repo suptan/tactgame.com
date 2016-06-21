@@ -6,6 +6,8 @@
         $scope.marketStatus = 'OPENED';
         $scope.marketData = new Array();
         $scope.windowWidth = window.innerWidth;
+        $scope.orderOptions = [];
+        $scope.orderSeries = "";
 
         // Get market data from json
         stockSearch.searchStockList(function (response) {
@@ -25,8 +27,6 @@
             // Set score board
             playerData();
         });
-
-        
     }
 
     // Change game turn
@@ -170,6 +170,20 @@
                     }
                 });
             });
+
+            // Set order by options
+            var jsonKeys = $scope.playerList[0];
+            angular.forEach(jsonKeys, function (key, value) {
+                // Exclude order by id
+                if (value === 'Stocks')
+                    return;
+                // Ascending
+                $scope.orderOptions.push(value);
+                // Descending
+                //$scope.orderOptions.push('-' + value);
+            });
+            // Set order by default
+            $scope.orderOptionSelected = $scope.orderOptions[0];
         }, function (response) {
             console.log(response);
         });

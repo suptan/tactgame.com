@@ -7,6 +7,7 @@
     $scope.tradePrice = 0.00;
     $scope.commissionRate = 0.00;
     $scope.windowWidth = window.innerWidth;
+    $scope.isMarketOpen = false;
 
     $scope.init = function () {
         // Update market data
@@ -33,6 +34,12 @@
             $scope.commissionRate = response.ResponseMessage;
         }, function (response) {
             showErrorDialog(ev, response);
+        });
+        // Check market status
+        portfolioService.checkMarketStatus(function (response) {
+            $scope.isMarketOpen = response.ResponseMessage;
+        }, function (response) {
+            showErrorDialog(ev, response)
         });
     }
 

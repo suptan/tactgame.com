@@ -38,6 +38,11 @@ namespace tactgame.com.Models
         private decimal portfolio;
 
         /// <summary>
+        /// The dividend of player.
+        /// </summary>
+        private decimal dividend;
+
+        /// <summary>
         /// The profit and loss of stock in portfolio.
         /// </summary>
         [Required]
@@ -100,6 +105,15 @@ namespace tactgame.com.Models
         }
 
         /// <summary>
+        /// Gets or sets the player dividend.
+        /// </summary>
+        public decimal Dividend
+        {
+            get { return this.dividend; }
+            set { this.dividend = value; }
+        }
+
+        /// <summary>
         /// Gets or sets the portfolio profit and loss value.
         /// </summary>
         /// <value>The profit and loss.</value>
@@ -139,12 +153,14 @@ namespace tactgame.com.Models
         /// <param name="id">Identifier.</param>
         /// <param name="name">Name.</param>
         /// <param name="cash">Cash.</param>
+        /// <param name="dividend">Dividend.</param>
         /// <param name="portfolio">Portfolio.</param>
-        public PlayerModel(int id, string name, decimal cash, decimal portfolio)
+        public PlayerModel(int id, string name, decimal cash, decimal dividend, decimal portfolio)
         {
             this.id = id;
             this.name = name;
             this.cash = cash;
+            this.dividend = dividend;
             this.portfolio = portfolio;
         }
     }

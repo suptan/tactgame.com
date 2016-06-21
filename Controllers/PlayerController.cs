@@ -61,7 +61,6 @@ namespace tactgame.com.Controllers
         /// <summary>
         /// Seach for available stock for trade.
         /// </summary>
-        /// <param name="currentTurn"></param>
         /// <returns></returns>
         [HttpPost]
         public JsonResult MarketSearch()
@@ -75,6 +74,23 @@ namespace tactgame.com.Controllers
                 return JSONHelper.CreateJSONResult(false, ex);
             }
 
+        }
+
+        /// <summary>
+        /// Check is market available for trade
+        /// </summary>
+        /// <returns>The market status</returns>
+        [HttpPost]
+        public JsonResult CheckMarketStatus()
+        {
+            try
+            {
+                return JSONHelper.CreateJSONResult(true, IsMarketOpened());
+            }
+            catch (Exception e)
+            {
+                return JSONHelper.CreateJSONResult(false, e.Message);
+            }
         }
 
         /// <summary>
@@ -372,12 +388,12 @@ namespace tactgame.com.Controllers
                     }
                 }
                 // Check user role for available stock to trade
-                if(Session["USER_ROLE"] != null)
-                {
-                    // Only Index Fund Manager can trade index
-                    if (!Session["USER_ROLE"].ToString().Equals(ConfigurationManager.AppSettings["indexfunder"]))
-                        csvData.RemoveAll(p => p.Name.ToLower().Equals("index"));
-                }
+                //if(Session["USER_ROLE"] != null)
+                //{
+                //    // Only Index Fund Manager can trade index
+                //    if (!Session["USER_ROLE"].ToString().Equals(ConfigurationManager.AppSettings["indexfunder"]))
+                //        csvData.RemoveAll(p => p.Name.ToLower().Equals("index"));
+                //}
             }
             catch (Exception ex)
             {
@@ -403,7 +419,7 @@ namespace tactgame.com.Controllers
                 {
                     if (!row[0].ToLower().Equals("id"))
                     {
-                        result = new PlayerModel(int.Parse(row[0]), row[1], decimal.Parse(row[2]), decimal.Parse(row[3]));
+                        result = new PlayerModel(int.Parse(row[0]), row[1], decimal.Parse(row[2]), decimal.Parse(row[3]), decimal.Parse(row[4]));
                     }
                 }
             }
@@ -421,12 +437,13 @@ namespace tactgame.com.Controllers
             using (CSVHelper.CsvFileWriter writer = new CSVHelper.CsvFileWriter(playerPath, false))
             {
                 // Add file header column
-                writer.AddRow("id,name,cash,portfolio");
+                writer.AddRow("id,name,cash,dividend,portfolio");
                 // New player data
                 writer.AddRow(string.Format("{0},{1},{2},{3}", 
-                    Session["USER_ID"], 
-                    Session["USER_NAME"], 
-                    player.Cash, 
+                    Session["USER_ID"],
+                    Session["USER_NAME"],
+                    player.Cash,
+                    player.Dividend,
                     player.Portfolio));
             }
         }

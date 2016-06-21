@@ -16,6 +16,7 @@ namespace tactgame.com.Controllers
         private string marketDataPath = string.Format("{0}\\{1}\\{2}", System.Web.HttpContext.Current.Server.MapPath("~/App_Data"), ConfigurationManager.AppSettings["boards"], ConfigurationManager.AppSettings["market"]);
         private string turnPath = string.Format("{0}\\{1}\\{2}", System.Web.HttpContext.Current.Server.MapPath("~/App_Data"), ConfigurationManager.AppSettings["boards"], ConfigurationManager.AppSettings["currentTurn"]);
         private readonly string PLAYER_FLODER = string.Format(@"{0}\{1}", System.Web.HttpContext.Current.Server.MapPath("~/App_Data"), ConfigurationManager.AppSettings["players"]);
+        private readonly string BACKUP_PATH = string.Format(@"{0}\{1}", System.Web.HttpContext.Current.Server.MapPath("~/App_Data"), ConfigurationManager.AppSettings["backups"]);
 
         /// <summary>
         /// 
@@ -234,7 +235,7 @@ namespace tactgame.com.Controllers
             }
             catch (Exception ex)
             {
-                return JSONHelper.CreateJSONResult(false, ex);
+                return JSONHelper.CreateJSONResult(false, ex.Message);
             }
 
             return JSONHelper.CreateJSONResult(true, turn);
@@ -275,28 +276,125 @@ namespace tactgame.com.Controllers
             if (verifyUser != null)
                 return verifyUser;
 
-            int turn = 1;
+            int resetTurn = 1;
             var csvFile = turnPath;
 
             try
             {
+                // Save game result
+                var mainPlayerData = ConfigurationManager.AppSettings["playersinfo"];
+                var backupPath = string.Format(@"{0}\{1}", BACKUP_PATH, DateTime.Now.ToString("dd_MM_yyyy")); //Path.Combine(BACKUP_PATH, DateTime.Now.ToShortDateString());
+                var files = Directory.GetFiles(PLAYER_FLODER);
+
+                // If back up folder not exists then create one
+                if (!Directory.Exists(backupPath))
+                    Directory.CreateDirectory(backupPath);
+
+                // Copy the files and overwrite destination files if they already exist.
+                foreach (string s in files)
+                {
+                    // Use static Path methods to extract only the file name from the path.
+                    var fileName = Path.GetFileName(s);
+                    // Skip player info data
+                    if (fileName.Equals(mainPlayerData)) continue;
+                    var destFile = Path.Combine(backupPath, fileName);
+                    System.IO.File.Copy(s, destFile, true);
+                }
+
+                // Reset or clear current player data
+                var isResetData = bool.Parse(ConfigurationManager.AppSettings["keepdata"]);
+
+                if (isResetData)
+                {
+                    foreach(var path in files)
+                    {
+                        var portfolioFormat = ConfigurationManager.AppSettings["playerstock"];
+                        var searchAll = new List<string>();
+                        var fileName = Path.GetFileName(path);
+                        // Skip player info data
+                        if (fileName.Equals(mainPlayerData)) continue;
+                        // Reset player portfolio
+                        if (fileName.Contains(portfolioFormat))
+                        {
+                            // Get portfolio file header
+                            using (CSVHelper.CsvFileReader reader = new CSVHelper.CsvFileReader(path))
+                            {
+                                while (reader.ReadRow(searchAll))
+                                {
+                                    break;
+                                }
+                            }
+                            // Clean portfolio
+                            using (var writer = new CSVHelper.CsvFileWriter(path, false))
+                            {
+                                // Add header column
+                                writer.AddRow(string.Join(",", searchAll.ToArray()));
+                            }
+
+                        }
+                        else // Reset player cash
+                        {
+                            var header = string.Empty;
+                            var data = string.Empty;
+                            // Reset player data by get the existing data and change to initialize value
+                            using (var reader = new CSVHelper.CsvFileReader(path))
+                            {
+                                while (reader.ReadRow(searchAll))
+                                {
+                                    if (searchAll.Contains("id"))
+                                        header = string.Join(",", searchAll.ToArray());
+                                    else
+                                    {
+                                        // Reset cash
+                                        searchAll[2] = ConfigurationManager.AppSettings["startCash"];
+                                        // Reset portfolio value
+                                        searchAll[3] = "0";
+
+                                        data = string.Join(",", searchAll.ToArray());
+                                    }
+                                }
+                            }
+                            // Over write with new data
+                            using(var writer = new CSVHelper.CsvFileWriter(path, false))
+                            {
+                                writer.AddRow(header);
+                                writer.AddRow(data);
+                            }
+                        }
+                    }
+
+                }
+                else
+                {
+                    // Find all players data
+                    var di = new DirectoryInfo(PLAYER_FLODER);
+                    // Clean every files
+                    foreach(var file in di.GetFiles())
+                    {
+                        // Skip player info data
+                        if (file.Name.Equals(mainPlayerData)) continue;
+                        // Delete player data
+                        file.Delete();
+                    }
+                }
+
                 // Reset game turn
                 using (CSVHelper.CsvFileWriter writer = new CSVHelper.CsvFileWriter(csvFile, false))
                 {
                     // Write csv column
                     writer.AddRow("turn");
                     // Write turn
-                    writer.AddRow(turn.ToString());
+                    writer.AddRow(resetTurn.ToString());
                 }
 
-                UpdateMarketData(turn);
+                UpdateMarketData(resetTurn);
             }
             catch (Exception ex)
             {
                 return JSONHelper.CreateJSONResult(false, ex);
             }
 
-            return JSONHelper.CreateJSONResult(true, turn);
+            return JSONHelper.CreateJSONResult(true, resetTurn);
         }
 
         [HttpPost]
@@ -439,7 +537,7 @@ namespace tactgame.com.Controllers
                             {
                                 if (!searchAll[0].ToLower().Equals("id"))
                                 {
-                                    var player = new PlayerModel(int.Parse(searchAll[0]), searchAll[1], decimal.Parse(searchAll[2]), decimal.Parse(searchAll[3]));
+                                    var player = new PlayerModel(int.Parse(searchAll[0]), searchAll[1], decimal.Parse(searchAll[2]), decimal.Parse(searchAll[3]), decimal.Parse(searchAll[4]));
                                     csvData.Add(player);
                                     playerId = player.ID;
                                 }
@@ -583,6 +681,7 @@ namespace tactgame.com.Controllers
                     //var total = portfolio.Sum(p => p.Vol) * stock.Dividend;
                     //
                     player.Cash += total;
+                    player.Dividend += total;
                 }
             }
             // Update player data
@@ -592,12 +691,13 @@ namespace tactgame.com.Controllers
                 using (var writer = new CSVHelper.CsvFileWriter(csvPath,false))
                 {
                     // Header
-                    writer.AddRow("id,name,cash,portfolio");
+                    writer.AddRow("id,name,cash,dividend,portfolio");
                     // New data
-                    writer.AddRow(string.Format("{0},{1},{2},{3}",
+                    writer.AddRow(string.Format("{0},{1},{2},{3},{4}",
                         player.ID,
                         player.Name,
                         player.Cash,
+                        player.Dividend,
                         player.Portfolio));
                 }
             }

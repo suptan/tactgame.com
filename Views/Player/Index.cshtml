@@ -63,13 +63,13 @@
                         </div>
                     </div>
                     <div class="row form-group col-xs-12 col-sm-12 col-md-12 col-lg-12">
-                        <button type="button" class="btn btn-primary" style="float:right;" ng-click="stockTrade($event)">CONFIRM</button>
+                        <button type="button" class="btn btn-primary" style="float:right;" ng-click="stockTrade($event)" ng-if="isMarketOpen">CONFIRM</button>
                     </div>
                 </div>
             </div>
             <div class="row panel-body box-effect8 white-bg top-buffer col-xs-12 col-sm-12 col-md-12 col-lg-12">
                 <div class="col-xs-3 col-sm-3 col-md-3 col-lg-3">
-                    Cash
+                    <label>Cash</label>
                 </div>
                 <div class="col-xs-9 col-sm-9 col-md-9 col-lg-9">
                     {{ player.Cash | currency:'฿' }}
@@ -77,7 +77,7 @@
             </div>
             <div class="row panel-body box-effect8 white-bg top-buffer col-xs-12 col-sm-12 col-md-12 col-lg-12">
                 <div class="col-xs-3 col-sm-3 col-md-3 col-lg-3">
-                    Stock Value
+                    <label>Stock Value</label>
                 </div>
                 <div class="col-xs-9 col-sm-9 col-md-9 col-lg-9">
                     {{ getPortFolioPL() | currency:'฿' }}
@@ -85,10 +85,18 @@
             </div>
             <div class="row panel-body box-effect8 white-bg top-buffer col-xs-12 col-sm-12 col-md-12 col-lg-12">
                 <div class="col-xs-3 col-sm-3 col-md-3 col-lg-3">
-                    Portfolio
+                    <label>Portfolio</label>
                 </div>
                 <div class="col-xs-9 col-sm-9 col-md-9 col-lg-9">
                     {{ player.Portfolio | currency:'฿' }}
+                </div>
+            </div>
+            <div class="row panel-body box-effect8 white-bg top-buffer col-xs-12 col-sm-12 col-md-12 col-lg-12">
+                <div class="col-xs-3 col-sm-3 col-md-3 col-lg-3">
+                    <label>Dividend</label>
+                </div>
+                <div class="col-xs-9 col-sm-9 col-md-9 col-lg-9">
+                    {{ player.Dividend | currency:'฿' }}
                 </div>
             </div>
         </div>
@@ -219,25 +227,38 @@
                     <div class="v">
                         <table class="confirm-dialog-table">
                             <tr>
-                                <td>Buy:</td>
-                                <td>{{ stock.stockTradeSelected }}</td>
+                                <td></td>
+                                <td colspan="4"><strong>Buy:</strong></td>
                             </tr>
                             <tr>
+                                <td></td>
+                                <td>{{ stock.stockTradeSelected }}</td>
+                                <td style="padding-left:20px;">&nbsp;</td>
                                 <td>Volume:</td>
                                 <td>{{ stock.tradeVol | number:0 }}</td>
                             </tr>
                             <tr>
+                                <td colspan="3"></td>
                                 <td>Price:</td>
                                 <td>{{ stock.tradePrice | currency:'฿' }}</td>
                             </tr>
                             <tr>
+                                <td colspan="3"></td>
                                 <td>Total:</td>
                                 <td>{{ stock.total | currency:'฿' }}</td>
                             </tr>
-                            <tr><td>&nbsp;</td></tr>
                             <tr>
+                                <td colspan="5"><hr /></td>
+                            </tr>
+                            <tr>
+                                <td></td>
                                 <td>Commission:</td>
+                                <td></td>
                                 <td>{{ stock.commissionRate | currency:'฿' }}</td>
+                                <td></td>
+                            </tr>
+                            <tr>
+                                <td colspan="5">&nbsp;</td>
                             </tr>
                         </table>
                     </div>

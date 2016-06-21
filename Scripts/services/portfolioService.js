@@ -45,4 +45,13 @@
                 errorCallback(response);
             });
     }
+
+    this.checkMarketStatus = function (successCallback, errorCallback) {
+        return $http.post("/Player/CheckMarketStatus", {})
+            .success(function (response) {
+                successCallback(response);
+            }).error(function (response) {
+                errorCallback(response);
+            });
+    }
 }]);

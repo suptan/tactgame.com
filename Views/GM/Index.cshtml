@@ -7,14 +7,14 @@
         <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
             <p><span>Turn</span> : {{ currentTurn }} <span>Market Status</span> : {{ marketStatus }}</p>
             <button type="button" class="btn btn-primary" ng-click="nextTurn()">Next Turn</button>
-            <button type="button" class="btn btn-success" ng-click="marketOpen()">Market Opend</button>
+            <button type="button" class="btn btn-success" ng-click="marketOpen()">Market Opened</button>
             <button type="button" class="btn btn-warning" ng-click="marketClose()">Market Clsoed</button>
-            <button type="button" class="btn btn-danger" ng-click="resetTurn()">Reset Game</button>
+            <button type="button" class="btn btn-danger pull-right" ng-click="resetTurn()">Reset Game</button>
         </div>
     </div>
     <div class="row">
         <div class="table-responsive col-xs-4 col-sm-4 col-md-4 col-lg-4">
-                <h2>Stick List</h2>
+                <h2>Stock List</h2>
                 <table class="responstable table-hover">
                     <tr>
                         <th>Name</th>
@@ -44,10 +44,21 @@
         </div>
     <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
         <h2>Score Board</h2>
-        <div ng-repeat="item in playerList" ng-model="playerList">
+        <div class="col-xs-12 col-sm-12 col-md-6">
+            <div class="col-xs-6 col-sm-6">
+                <select class="form-control" ng-model="orderOptionSelected" ng-options="item for item in orderOptions"></select>
+            </div>
+            <div class="col-xs-6 col-sm-6">
+                <select class="form-control" ng-model="orderSeries">
+                    <option label="Asnc" value=""></option>
+                    <option label="Dsnc" value="-"></option>
+                </select>
+            </div>
+        </div>
+        <div ng-repeat="item in playerList | orderBy : orderSeries + orderOptionSelected" ng-model="playerList">
             <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
                 <h4>{{ item.Name }}</h4>
-                <p><span>Cash</span> : {{ item.Cash | currency:'฿' }} <span>Portfolio</span> : {{ item.Portfolio | currency:'฿' }}</p>
+                <p><span>Cash</span> : {{ item.Cash | currency:'฿' }} <span>Portfolio</span> : {{ item.Portfolio | currency:'฿' }} <span>Dividend</span> : {{ item.Dividend | currency:'฿'}}</p>
                 <table class="responstable col-xs-12 col-sm-12 col-md-12 col-lg-12">
                     <thead>
                         <tr>

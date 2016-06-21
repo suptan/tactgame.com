@@ -51,7 +51,8 @@ form:after {
 	position: relative;
 	text-align: center;
 	text-shadow: 0 1px 0 #fff;
-	width: 400px;
+    width:100%;
+	max-width: 400px;
 }
 #content h1 {
 	color: #7E7E7E;
@@ -276,4 +277,12 @@ div.center {
 
 .primary-background {
     background-color: #DCDDDF;
+}
+
+.white-bg {
+    background:#ffffff !important;
+}
+
+.top-buffer {
+    margin-top:20px;
 }

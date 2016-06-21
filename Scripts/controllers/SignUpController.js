@@ -15,7 +15,7 @@
         // Check password match condition
         $scope.passErrorMsg = $scope.password ? "" : "Password can contain only letters and numbers from 6 - 20 character.";
         // Check re-password match with password
-        $scope.retyPassErrorMsg = $scope.rePassword ? "" : "Password does not matched.";
+        $scope.retyPassErrorMsg = $scope.rePassword && $scope.rePassword === $scope.password ? "" : "Password does not matched.";
 
         if ($scope.userErrorMsg && $scope.passErrorMsg && $scope.retyPassErrorMsg) return;
 

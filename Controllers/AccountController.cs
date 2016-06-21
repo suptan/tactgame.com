@@ -36,7 +36,7 @@ namespace tactgame.com.Controllers
 
                 foreach (var name in players)
                 {
-                    if (players.Contains(name))
+                    if (name.Contains(username))
                         return JSONHelper.CreateJSONResult(false, "Username already exists."); 
                 }
                 // Lastest player id
@@ -66,9 +66,9 @@ namespace tactgame.com.Controllers
                 using (var writer = new CSVHelper.CsvFileWriter(playerPath, false))
                 {
                     // Header columns
-                    writer.AddRow("id,name,cash,portfolio");
+                    writer.AddRow("id,name,cash,dividend,portfolio");
                     // Player data
-                    writer.AddRow(string.Format("{0},{1},{2},{3}", playerId, username, ConfigurationManager.AppSettings["startCash"], 0.00));
+                    writer.AddRow(string.Format("{0},{1},{2},{3},{4}", playerId, username, ConfigurationManager.AppSettings["startCash"], 0.00, 0.00));
                 }
                 // Create player portfolio
                 var playerPortfolioPath = string.Format(@"{0}\{1}stock.csv", PLAYER_FOLDER, username);
