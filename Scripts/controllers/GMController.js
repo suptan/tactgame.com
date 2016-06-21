@@ -3,21 +3,26 @@
     $scope.init = function () {
         // Set game turn
         $scope.currentTurn();
-        $scope.marketStatus = 'OPENED';
+        $scope.checkMarketStatus();
         $scope.marketData = new Array();
         $scope.windowWidth = window.innerWidth;
         $scope.orderOptions = [];
         $scope.orderSeries = "";
+        $scope.errorMsg = "";
 
         // Get market data from json
         stockSearch.searchStockList(function (response) {
-            $scope.stockList = new Array();
-            $scope.stockListUsed = new Array();
-            // Create list of stocks name
-            angular.forEach(response.ResponseMessage, function (value, key) {
-                $scope.stockList.push(value.Name);
-                $scope.stockListUsed.push(true);
-            });
+            if (response.IsSuccess) {
+                $scope.stockList = new Array();
+                $scope.stockListUsed = new Array();
+                // Create list of stocks name
+                angular.forEach(response.ResponseMessage, function (value, key) {
+                    $scope.stockList.push(value.Name);
+                    $scope.stockListUsed.push(true);
+                });
+            } else {
+                $scope.errorMsg = response.ResponseMessage;
+            }
         }, function (response) {
             console.log(response);
         }).then(function () {
@@ -32,9 +37,13 @@
     // Change game turn
     $scope.nextTurn = function () {
         gameCtrl.nextTurn(function (response) {
-            $scope.currentTurn = response.ResponseMessage;
-            updateMarketData();
-            playerData();
+            if (response.IsSuccess) {
+                $scope.currentTurn = response.ResponseMessage;
+                updateMarketData();
+                playerData();
+            } else {
+                console.log(response);
+            }
         }, function (response) { // Error from process
             // If error is redirect
             if (response.data.ResponseMessage.uri) {
@@ -46,7 +55,15 @@
 
     $scope.currentTurn = function () {
         gameCtrl.currentTurn(function (response) {
-            $scope.currentTurn = response.ResponseMessage;
+            $scope.turn = response.ResponseMessage;
+        }, function (response) {
+            console.log(response);
+        });
+    }
+
+    $scope.checkMarketStatus = function () {
+        gameCtrl.marketStatus(function (response) {
+            $scope.marketStatus = (response.ResponseMessage == true) ? 'OPENED' : 'CLOSED';
         }, function (response) {
             console.log(response);
         });

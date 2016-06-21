@@ -5,7 +5,10 @@
 <div ng-app="tactSchoolGameApp" ng-controller="GMCtrl" ng-init="init()">
     <div class="row">
         <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
-            <p><span>Turn</span> : {{ currentTurn }} <span>Market Status</span> : {{ marketStatus }}</p>
+            <p class="alert alert-danger" ng-if="errorMsg">
+                <strong>{{ errorMsg }}</strong>
+            </p>
+            <h1><span>Turn</span> : {{ turn }} <span>Market Status</span> : {{ marketStatus }}</h1>
             <button type="button" class="btn btn-primary" ng-click="nextTurn()">Next Turn</button>
             <button type="button" class="btn btn-success" ng-click="marketOpen()">Market Opened</button>
             <button type="button" class="btn btn-warning" ng-click="marketClose()">Market Clsoed</button>

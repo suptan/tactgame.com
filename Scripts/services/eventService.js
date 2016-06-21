@@ -44,4 +44,13 @@
                 errorCallback(response);
             });
     }
+
+    this.marketStatus = function (successCallback, errorCallback) {
+        return $http.post("/GM/IsMarketOpen", {})
+            .success(function (response) {
+                successCallback(response);
+            }).error(function (response) {
+                errorCallback(response);
+            });
+    }
 }]);

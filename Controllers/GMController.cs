@@ -427,6 +427,34 @@ namespace tactgame.com.Controllers
             return JSONHelper.CreateJSONResult(true, true);
         }
 
+        [HttpPost]
+        public JsonResult IsMarketOpen()
+        {
+            var status = false;
+            try
+            {
+                // Find market status file
+                var csvFile = string.Format("{0}\\{1}\\{2}", System.Web.HttpContext.Current.Server.MapPath("~/App_Data"), ConfigurationManager.AppSettings["boards"], ConfigurationManager.AppSettings["marketStatus"]);
+                var row = new List<String>();
+                using(var reader = new CSVHelper.CsvFileReader(csvFile))
+                {
+                    while (reader.ReadRow(row))
+                    {
+                        if (row.Contains("status"))
+                            continue;
+
+                        status = row.Contains("1") ? true : false;
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                return JSONHelper.CreateJSONResult(false, ex);
+            }
+
+            return JSONHelper.CreateJSONResult(true, status);
+        }
+
         #endregion
 
         #region Private Method
